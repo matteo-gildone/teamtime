@@ -1,10 +1,8 @@
-/*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -12,16 +10,17 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Show current local time for all colleagues",
+	Run:   listFunc,
+}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
-	},
+func listFunc(cmd *cobra.Command, args []string) {
+	fmt.Printf("| %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	fmt.Printf("| %-20s | %-20s | %-20s | %-20s |\n", "Name", "City", "Timezone", "Local Time")
+	fmt.Printf("| %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	fmt.Printf("| %-20s | %-20s | %-20s | %-20s |\n", "Matteo", "Verona", "Europe/Italy", "10:30")
+	fmt.Printf("| %-20s | %-20s | %-20s | %-20s |\n", "Cookin Monster", "Tuxon", "US/Arizona", "20:30")
+	fmt.Printf("| %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
 }
 
 func init() {
