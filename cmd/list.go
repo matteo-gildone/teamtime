@@ -2,8 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/matteo-gildone/teamtime/internals/config"
+	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
 )
 
@@ -11,28 +16,36 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Show current local time for all colleagues",
-	Run:   listFunc,
+	RunE:  listFunc,
 }
 
-func listFunc(cmd *cobra.Command, args []string) {
-	fmt.Printf("| %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
-	fmt.Printf("| %-20s | %-20s | %-20s | %-20s |\n", "Name", "City", "Timezone", "Local Time")
-	fmt.Printf("| %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
-	fmt.Printf("| %-20s | %-20s | %-20s | %-20s |\n", "Matteo", "Verona", "Europe/Italy", "10:30")
-	fmt.Printf("| %-20s | %-20s | %-20s | %-20s |\n", "Cookin Monster", "Tuxon", "US/Arizona", "20:30")
-	fmt.Printf("| %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+func listFunc(cmd *cobra.Command, args []string) error {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory %w", err)
+	}
+	configPath := filepath.Join(homeDir, ".teamtime", "colleagues.json")
+	m := config.NewManager(configPath)
+	cl := types.NewColleagues()
+	if err := m.Load(cl); err != nil {
+		return fmt.Errorf("failed load 'colleagues.json' in: %w", err)
+	}
+
+	now := time.Now()
+
+	fmt.Printf("| %-20s | %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	fmt.Printf("| %-20s | %-20s | %-20s | %-20s | %-20s |\n", "ID", "Name", "City", "Timezone", "Local Time")
+	fmt.Printf("| %-20s | %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	for idx, c := range *cl {
+		loc, _ := time.LoadLocation(c.Timezone)
+		local := now.In(loc)
+		fmt.Printf("| %-20d | %-20s | %-20s | %-20s | %-20s |\n", idx+1, c.Name, c.City, c.Timezone, local.Format("15:04 (Mon 02 Jan)"))
+	}
+
+	fmt.Printf("| %-20s | %-20s + %-20s + %-20s + %-20s |\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	return nil
 }
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
