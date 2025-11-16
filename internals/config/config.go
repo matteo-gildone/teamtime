@@ -3,7 +3,9 @@ package config
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/matteo-gildone/teamtime/internals/types"
 )
@@ -42,8 +44,35 @@ func (m *Manager) Exists() bool {
 	return err == nil
 }
 
-func NewManager(path string) *Manager {
-	return &Manager{
-		filePath: path,
+func (m *Manager) EnsureFolder() error {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory %w", err)
 	}
+	configDir := filepath.Join(homeDir, ".teamtime")
+	_, err = os.Stat(configDir)
+	if err == nil {
+		return fmt.Errorf("Reinitialized existing app in %s\n\n", configDir)
+	}
+
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		return fmt.Errorf("failed create directory %s: %w", configDir, err)
+	}
+	return nil
+}
+
+func NewManager() (*Manager, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user home directory %w", err)
+	}
+	configPath := filepath.Join(homeDir, ".teamtime", "colleagues.json")
+
+	return &Manager{
+		filePath: configPath,
+	}, nil
+}
+
+func (m *Manager) GetFilePath() string {
+	return m.filePath
 }

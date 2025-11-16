@@ -2,12 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"strconv"
 
-	"github.com/matteo-gildone/teamtime/internals/config"
-	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
 )
 
@@ -24,24 +20,15 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("idx must be a number %w", err)
 	}
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get user home directory %w", err)
-	}
-	configPath := filepath.Join(homeDir, ".teamtime", "colleagues.json")
-	m := config.NewManager(configPath)
-	cl := types.NewColleagues()
-	if err := m.Load(cl); err != nil {
-		return fmt.Errorf("failed load 'colleagues.json' in: %w", err)
-	}
-
-	err = cl.Delete(idx)
+	m, _ := GetManager(cmd.Context())
+	colleagues, _ := GetColleagues(cmd.Context())
+	err = colleagues.Delete(idx)
 
 	if err != nil {
 		return fmt.Errorf("failed remove 'colleagues.json' in: %w", err)
 	}
 
-	err = m.Save(cl)
+	err = m.Save(colleagues)
 
 	if err != nil {
 		return fmt.Errorf("failed add 'colleagues.json' in: %w", err)

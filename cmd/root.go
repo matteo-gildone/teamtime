@@ -1,15 +1,54 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"os"
 
+	"github.com/matteo-gildone/teamtime/internals/config"
+	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
+)
+
+type contextKey string
+
+const (
+	managerKey    contextKey = "manager"
+	colleaguesKey contextKey = "colleagues"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "teamtime",
 	Short: "Global team time & weather",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if cmd.Name() == "init" || cmd.Name() == "help" {
+			return nil
+		}
+
+		m, err := config.NewManager()
+
+		if err != nil {
+			return fmt.Errorf(" create new manager %w", err)
+		}
+
+		if !m.Exists() {
+			return fmt.Errorf("'colleagues.json' not found, run 'teamtime init'")
+		}
+
+		cl := types.NewColleagues()
+		if err := m.Load(cl); err != nil {
+			return fmt.Errorf("failed load 'colleagues.json' in: %w", err)
+		}
+
+		ctx := cmd.Context()
+		ctx = context.WithValue(ctx, managerKey, m)
+		ctx = context.WithValue(ctx, colleaguesKey, cl)
+
+		cmd.SetContext(ctx)
+
+		return nil
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -21,14 +60,20 @@ func Execute() {
 	}
 }
 
-func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+func GetColleagues(ctx context.Context) (*types.ColleagueList, error) {
+	val := ctx.Value(colleaguesKey)
+	colleagues, ok := val.(*types.ColleagueList)
+	if !ok {
+		return nil, fmt.Errorf("%s not found in context", colleaguesKey)
+	}
+	return colleagues, nil
+}
 
-	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.teamtime.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func GetManager(ctx context.Context) (*config.Manager, error) {
+	val := ctx.Value(managerKey)
+	m, ok := val.(*config.Manager)
+	if !ok || m == nil {
+		return nil, fmt.Errorf("%s not found in context", managerKey)
+	}
+	return m, nil
 }

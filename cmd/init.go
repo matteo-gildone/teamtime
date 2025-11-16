@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/matteo-gildone/teamtime/internals/config"
 	"github.com/matteo-gildone/teamtime/internals/types"
@@ -31,31 +29,26 @@ func init() {
 }
 
 func initFunc() error {
-	homeDir, err := os.UserHomeDir()
+	m, err := config.NewManager()
+
 	if err != nil {
-		return fmt.Errorf("failed to get user home directory %w", err)
-	}
-	configDir := filepath.Join(homeDir, appDir)
-	_, err = os.Stat(configDir)
-	if err == nil {
-		return fmt.Errorf("Reinitialized existing app in %s\n\n", configDir)
+		return fmt.Errorf("init command - %w", err)
 	}
 
-	if err := os.MkdirAll(configDir, 0755); err != nil {
-		return fmt.Errorf("failed create directory %s: %w", configDir, err)
-	}
-	configPath := filepath.Join(configDir, "colleagues.json")
+	err = m.EnsureFolder()
 
-	m := config.NewManager(configPath)
+	if err != nil {
+		return fmt.Errorf("ensure folder - %w", err)
+	}
 
 	cl := types.ColleagueList{}
 
 	err = m.Save(&cl)
 
 	if err != nil {
-		return fmt.Errorf("failed create 'colleagues.json' in %s: %w", configDir, err)
+		return fmt.Errorf("failed create 'colleagues.json' %w", err)
 	}
 
-	fmt.Printf("Initialise app in: %s\n", configDir)
+	fmt.Printf("Initialise app in: %s\n", m.GetFilePath())
 	return nil
 }
