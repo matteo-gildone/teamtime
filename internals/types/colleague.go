@@ -1,9 +1,17 @@
 package types
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var (
+	ErrorInvalidIndex = errors.New("invalid index")
+	ErrEmptyList      = errors.New("colleagues list is empty")
+)
 
 type colleague struct {
-	Name     string `json:"file"`
+	Name     string `json:"name"`
 	City     string `json:"city"`
 	Timezone string `json:"timezone"`
 }
@@ -22,8 +30,13 @@ func (cl *ColleagueList) Add(name, city, tz string) {
 
 func (cl *ColleagueList) Delete(i int) error {
 	ls := *cl
+
+	if len(ls) == 0 {
+		return ErrEmptyList
+	}
+
 	if i <= 0 || i > len(ls) {
-		return fmt.Errorf("item %d does not exist", i)
+		return fmt.Errorf("%w: %d (must be a number between 1 and %d)", ErrorInvalidIndex, i, len(ls))
 	}
 
 	*cl = append(ls[:i-1], ls[i:]...)
