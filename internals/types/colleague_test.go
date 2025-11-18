@@ -32,14 +32,17 @@ func TestColleagueList_Add(t *testing.T) {
 
 	t.Run("Add multiple colleague", func(t *testing.T) {
 		colleagues := [][]string{
-			{"name 1", "city 1", "timezone 1"},
-			{"name 2", "city 2", "timezone 2"},
-			{"name 3", "city 3", "timezone 3"},
+			{"Alice", "London", "Europe/London"},
+			{"Bob", "Manchester", "Europe/London"},
+			{"Sabina", "Verona", "Europe/Rome"},
 		}
 		cl := ColleagueList{}
 
 		for _, colleague := range colleagues {
-			cl.Add(colleague[0], colleague[1], colleague[2])
+			err := cl.Add(colleague[0], colleague[1], colleague[2])
+			if err != nil {
+				t.Errorf("%v", err)
+			}
 		}
 
 		if len(cl) != 3 {
@@ -60,6 +63,70 @@ func TestColleagueList_Add(t *testing.T) {
 			}
 		}
 
+	})
+
+	t.Run("Add colleague without a name", func(t *testing.T) {
+		cl := ColleagueList{}
+		colleagueName := ""
+		colleagueCity := "Bari"
+		colleagueTZ := "Europe/Rome"
+		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+
+		if err == nil {
+			t.Fatal("Expected error, got nil")
+		}
+
+		if !errors.Is(err, ErrMissingName) {
+			t.Errorf("expected ErrMissingName, got %v", err)
+		}
+	})
+
+	t.Run("Add colleague without a city", func(t *testing.T) {
+		cl := ColleagueList{}
+		colleagueName := "Giulio"
+		colleagueCity := ""
+		colleagueTZ := "Europe/Rome"
+		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+
+		if err == nil {
+			t.Fatal("Expected error, got nil")
+		}
+
+		if !errors.Is(err, ErrMissingCity) {
+			t.Errorf("expected ErrMissingCity, got %v", err)
+		}
+	})
+
+	t.Run("Add colleague without timezone", func(t *testing.T) {
+		cl := ColleagueList{}
+		colleagueName := "Giulio"
+		colleagueCity := "Bari"
+		colleagueTZ := ""
+		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+
+		if err == nil {
+			t.Fatal("Expected error, got nil")
+		}
+
+		if !errors.Is(err, ErrMissingTimezone) {
+			t.Errorf("expected ErrMissingTimezone, got %v", err)
+		}
+	})
+
+	t.Run("Add colleague with unknown timezone", func(t *testing.T) {
+		cl := ColleagueList{}
+		colleagueName := "Giulio"
+		colleagueCity := "Bari"
+		colleagueTZ := "Asia/Tokio"
+		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+
+		if err == nil {
+			t.Fatal("Expected error, got nil")
+		}
+
+		if err.Error() != "unknown time zone Asia/Tokio" {
+			t.Errorf("%v", err)
+		}
 	})
 }
 

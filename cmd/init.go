@@ -35,17 +35,17 @@ func initFunc() error {
 		return fmt.Errorf("init command - %w", err)
 	}
 
-	err = m.EnsureFolder()
+	if m.Exists() {
+		return fmt.Errorf("app already initialised app in %s\n", m.GetFilePath())
+	}
 
-	if err != nil {
+	if err = m.EnsureFolder(); err != nil {
 		return fmt.Errorf("ensure folder - %w", err)
 	}
 
 	cl := types.ColleagueList{}
 
-	err = m.Save(&cl)
-
-	if err != nil {
+	if err = m.Save(&cl); err != nil {
 		return fmt.Errorf("failed create 'colleagues.json' %w", err)
 	}
 

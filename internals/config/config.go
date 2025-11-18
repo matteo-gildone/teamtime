@@ -50,15 +50,19 @@ func (m *Manager) EnsureFolder() error {
 		return fmt.Errorf("failed to get user home directory %w", err)
 	}
 	configDir := filepath.Join(homeDir, ".teamtime")
-	_, err = os.Stat(configDir)
-	if err == nil {
-		return fmt.Errorf("Reinitialized existing app in %s\n\n", configDir)
+
+	if _, err = os.Stat(configDir); err == nil {
+		return nil
 	}
 
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return fmt.Errorf("failed create directory %s: %w", configDir, err)
 	}
 	return nil
+}
+
+func (m *Manager) GetFilePath() string {
+	return m.filePath
 }
 
 func NewManager() (*Manager, error) {
@@ -71,8 +75,4 @@ func NewManager() (*Manager, error) {
 	return &Manager{
 		filePath: configPath,
 	}, nil
-}
-
-func (m *Manager) GetFilePath() string {
-	return m.filePath
 }

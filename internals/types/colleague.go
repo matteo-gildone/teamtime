@@ -3,11 +3,15 @@ package types
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 var (
-	ErrorInvalidIndex = errors.New("invalid index")
-	ErrEmptyList      = errors.New("colleagues list is empty")
+	ErrMissingName     = errors.New("'Name' must not be empty")
+	ErrMissingCity     = errors.New("'City' must not be empty")
+	ErrMissingTimezone = errors.New("'Timezone' must not be empty")
+	ErrorInvalidIndex  = errors.New("invalid index")
+	ErrEmptyList       = errors.New("colleagues list is empty")
 )
 
 type colleague struct {
@@ -16,16 +20,41 @@ type colleague struct {
 	Timezone string `json:"timezone"`
 }
 
+func (c colleague) validate() error {
+	if c.Name == "" {
+		return fmt.Errorf("%w", ErrMissingName)
+	}
+
+	if c.City == "" {
+		return fmt.Errorf("%w", ErrMissingCity)
+	}
+
+	if c.Timezone == "" {
+		return fmt.Errorf("%w", ErrMissingTimezone)
+	}
+
+	if _, err := time.LoadLocation(c.Timezone); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type ColleagueList []colleague
 
-func (cl *ColleagueList) Add(name, city, tz string) {
+func (cl *ColleagueList) Add(name, city, tz string) error {
 	newCol := colleague{
 		Name:     name,
 		City:     city,
 		Timezone: tz,
 	}
 
+	if err := newCol.validate(); err != nil {
+		return err
+	}
+
 	*cl = append(*cl, newCol)
+	return nil
 }
 
 func (cl *ColleagueList) Delete(i int) error {
