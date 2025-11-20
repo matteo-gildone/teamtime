@@ -49,6 +49,6 @@ func initFunc() error {
 		return fmt.Errorf("failed create 'colleagues.json' %w", err)
 	}
 
-	fmt.Printf("Initialise app in: %s\n", m.GetFilePath())
+	fmt.Printf("Initialised app in: %s\n", m.GetFilePath())
 	return nil
 }
