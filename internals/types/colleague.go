@@ -26,15 +26,15 @@ func (c *colleague) Validate() error {
 	c.City = strings.TrimSpace(c.City)
 	c.Timezone = strings.TrimSpace(c.Timezone)
 	if c.Name == "" {
-		return fmt.Errorf("%w", ErrMissingName)
+		return ErrMissingName
 	}
 
 	if c.City == "" {
-		return fmt.Errorf("%w", ErrMissingCity)
+		return ErrMissingCity
 	}
 
 	if c.Timezone == "" {
-		return fmt.Errorf("%w", ErrMissingTimezone)
+		return ErrMissingTimezone
 	}
 
 	if _, err := time.LoadLocation(c.Timezone); err != nil {
