@@ -15,9 +15,15 @@ var addCmd = &cobra.Command{
 }
 
 func addFunc(cmd *cobra.Command, args []string) error {
-	m, _ := GetManager(cmd.Context())
-	colleagues, _ := GetColleagues(cmd.Context())
-	err := colleagues.Add(args[0], args[1], args[2])
+	m, err := GetManager(cmd.Context())
+	if err != nil {
+		return err
+	}
+	colleagues, err := GetColleagues(cmd.Context())
+	if err != nil {
+		return err
+	}
+	err = colleagues.Add(args[0], args[1], args[2])
 
 	if err != nil {
 		return fmt.Errorf("failed add colleague: %w", err)

@@ -34,14 +34,16 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	var filteredColleagues = types.ColleagueList{}
+	var filteredColleagues types.ColleagueList
 	for _, c := range *colleagues {
-		if strings.ToLower(c.Name) == strings.ToLower(args[0]) {
-			err := filteredColleagues.Add(c.Name, c.City, c.Timezone)
-			if err != nil {
-				return err
-			}
+		if strings.EqualFold(c.Name, args[0]) {
+			filteredColleagues = append(filteredColleagues, c)
 		}
+	}
+
+	if len(filteredColleagues) == 0 {
+		fmt.Printf("no colleague found with name: %s\n", args[0])
+		return nil
 	}
 
 	renderTable(filteredColleagues)
@@ -50,6 +52,9 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 }
 
 func renderTable(colleagues types.ColleagueList) {
+	if len(colleagues) == 0 {
+		return
+	}
 	now := time.Now()
 
 	fmt.Println()
@@ -60,6 +65,7 @@ func renderTable(colleagues types.ColleagueList) {
 		local := now.In(loc)
 		fmt.Printf("%-20d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, local.Format("15:04 (Mon 02 Jan)"))
 	}
+	fmt.Println()
 }
 
 func init() {

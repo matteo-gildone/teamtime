@@ -20,7 +20,7 @@ type colleague struct {
 	Timezone string `json:"timezone"`
 }
 
-func (c colleague) validate() error {
+func (c colleague) Validate() error {
 	if c.Name == "" {
 		return fmt.Errorf("%w", ErrMissingName)
 	}
@@ -49,7 +49,7 @@ func (cl *ColleagueList) Add(name, city, tz string) error {
 		Timezone: tz,
 	}
 
-	if err := newCol.validate(); err != nil {
+	if err := newCol.Validate(); err != nil {
 		return err
 	}
 

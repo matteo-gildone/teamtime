@@ -36,8 +36,8 @@ var rootCmd = &cobra.Command{
 			return fmt.Errorf("'colleagues.json' not found, run 'teamtime init'")
 		}
 
-		cl := types.NewColleagues()
-		if err := m.Load(cl); err != nil {
+		cl, err := m.Load()
+		if err != nil {
 			return fmt.Errorf("failed load 'colleagues.json' in: %w", err)
 		}
 

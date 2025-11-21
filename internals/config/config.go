@@ -23,21 +23,32 @@ func (m *Manager) Save(cl *types.ColleagueList) error {
 	return os.WriteFile(m.filePath, js, 0664)
 }
 
-func (m *Manager) Load(cl *types.ColleagueList) error {
+func (m *Manager) Load() (*types.ColleagueList, error) {
 	file, err := os.ReadFile(m.filePath)
 
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return nil
+			return types.NewColleagues(), nil
 		}
-		return err
+		return nil, err
 	}
 
 	if len(file) == 0 {
-		return nil
+		return types.NewColleagues(), nil
 	}
 
-	return json.Unmarshal(file, cl)
+	cl := types.NewColleagues()
+	if err := json.Unmarshal(file, cl); err != nil {
+		return nil, err
+	}
+
+	for _, c := range *cl {
+		if err = c.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	return cl, nil
 }
 func (m *Manager) Exists() bool {
 	_, err := os.Stat(m.filePath)
