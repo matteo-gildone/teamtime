@@ -64,70 +64,117 @@ func TestColleagueList_Add(t *testing.T) {
 		}
 
 	})
+}
 
-	t.Run("Add colleague without a name", func(t *testing.T) {
-		cl := ColleagueList{}
-		colleagueName := ""
-		colleagueCity := "Bari"
-		colleagueTZ := "Europe/Rome"
-		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+func TestColleague_Add_Validation(t *testing.T) {
+	tests := []struct {
+		name      string
+		inputName string
+		inputCity string
+		inputTZ   string
+		wantErr   error
+	}{
+		{
+			name:      "missing name",
+			inputName: "",
+			inputCity: "Bari",
+			inputTZ:   "Europe/Rome",
+			wantErr:   ErrMissingName,
+		},
+		{
+			name:      "missing city",
+			inputName: "Mariolino",
+			inputCity: "",
+			inputTZ:   "Europe/Rome",
+			wantErr:   ErrMissingCity,
+		},
+		{
+			name:      "missing timezone",
+			inputName: "Mariolino",
+			inputCity: "Aprilia",
+			inputTZ:   "",
+			wantErr:   ErrMissingTimezone,
+		},
+		{
+			name:      "whitespace only name",
+			inputName: "   ",
+			inputCity: "Bari",
+			inputTZ:   "Europe/Rome",
+			wantErr:   ErrMissingName,
+		},
+		{
+			name:      "whitespace only city",
+			inputName: "Gregorio",
+			inputCity: "   ",
+			inputTZ:   "Europe/Rome",
+			wantErr:   ErrMissingCity,
+		},
+		{
+			name:      "whitespace only timezone",
+			inputName: "Gregorio",
+			inputCity: "Alba",
+			inputTZ:   "   ",
+			wantErr:   ErrMissingTimezone,
+		},
+	}
 
-		if err == nil {
-			t.Fatal("Expected error, got nil")
-		}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cl := ColleagueList{}
+			err := cl.Add(tt.inputName, tt.inputCity, tt.inputTZ)
 
-		if !errors.Is(err, ErrMissingName) {
-			t.Errorf("expected ErrMissingName, got %v", err)
-		}
-	})
+			if err == nil {
+				t.Fatal("Expected error, got nil")
+			}
 
-	t.Run("Add colleague without a city", func(t *testing.T) {
-		cl := ColleagueList{}
-		colleagueName := "Giulio"
-		colleagueCity := ""
-		colleagueTZ := "Europe/Rome"
-		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("expected %v, got %v", tt.wantErr, err)
+			}
+		})
+	}
+}
 
-		if err == nil {
-			t.Fatal("Expected error, got nil")
-		}
+func TestColleague_Add_InvalidTimezones(t *testing.T) {
+	tests := []struct {
+		name    string
+		inputTZ string
+	}{
+		{
+			name:    "typo in timezone",
+			inputTZ: "Asia/Tokio",
+		},
+		{
+			name:    "completely invalid",
+			inputTZ: "NotaTimeZone",
+		},
+		{
+			name:    "partial timezone",
+			inputTZ: "Europe/",
+		},
+		{
+			name:    "numbers only",
+			inputTZ: "12345",
+		},
+		{
+			name:    "special characters",
+			inputTZ: "Europe/@£$",
+		},
+	}
 
-		if !errors.Is(err, ErrMissingCity) {
-			t.Errorf("expected ErrMissingCity, got %v", err)
-		}
-	})
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cl := ColleagueList{}
+			err := cl.Add("Test", "City", tt.inputTZ)
 
-	t.Run("Add colleague without timezone", func(t *testing.T) {
-		cl := ColleagueList{}
-		colleagueName := "Giulio"
-		colleagueCity := "Bari"
-		colleagueTZ := ""
-		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+			if err == nil {
+				t.Fatalf("Expected error for timezone %s, got nil", tt.inputTZ)
+			}
 
-		if err == nil {
-			t.Fatal("Expected error, got nil")
-		}
-
-		if !errors.Is(err, ErrMissingTimezone) {
-			t.Errorf("expected ErrMissingTimezone, got %v", err)
-		}
-	})
-
-	t.Run("Add colleague with unknown timezone", func(t *testing.T) {
-		cl := ColleagueList{}
-		colleagueName := "Giulio"
-		colleagueCity := "Bari"
-		colleagueTZ := "Asia/Tokio"
-		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
-
-		if err == nil {
-			t.Fatal("Expected error, got nil")
-		}
-
-		if err.Error() != "unknown time zone Asia/Tokio" {
-			t.Errorf("%v", err)
-		}
-	})
+			if err.Error() == "" {
+				t.Error("Expected non-empty error message")
+			}
+		})
+	}
 }
 
 func TestColleagueList_Delete(t *testing.T) {

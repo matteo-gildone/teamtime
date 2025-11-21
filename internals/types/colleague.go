@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -20,7 +21,10 @@ type colleague struct {
 	Timezone string `json:"timezone"`
 }
 
-func (c colleague) Validate() error {
+func (c *colleague) Validate() error {
+	c.Name = strings.TrimSpace(c.Name)
+	c.City = strings.TrimSpace(c.City)
+	c.Timezone = strings.TrimSpace(c.Timezone)
 	if c.Name == "" {
 		return fmt.Errorf("%w", ErrMissingName)
 	}
