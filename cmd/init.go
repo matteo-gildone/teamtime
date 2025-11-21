@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/matteo-gildone/teamtime/internals/config"
 	"github.com/matteo-gildone/teamtime/internals/types"
@@ -29,7 +30,11 @@ func init() {
 }
 
 func initFunc() error {
-	m, err := config.NewManager()
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("failed to get user home directory %w", err)
+	}
+	m, err := config.NewManager(homeDir)
 
 	if err != nil {
 		return fmt.Errorf("init command - %w", err)

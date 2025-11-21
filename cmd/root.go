@@ -26,7 +26,11 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 
-		m, err := config.NewManager()
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return fmt.Errorf("failed to get user home directory %w", err)
+		}
+		m, err := config.NewManager(homeDir)
 
 		if err != nil {
 			return fmt.Errorf(" create new manager %w", err)

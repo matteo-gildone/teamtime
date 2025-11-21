@@ -10,7 +10,10 @@ import (
 	"github.com/matteo-gildone/teamtime/internals/types"
 )
 
+var ErrMissingHomeDir = errors.New("'homeDir' must not be empty")
+
 type Manager struct {
+	homeDir  string
 	filePath string
 }
 
@@ -56,13 +59,9 @@ func (m *Manager) Exists() bool {
 }
 
 func (m *Manager) EnsureFolder() error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get user home directory %w", err)
-	}
-	configDir := filepath.Join(homeDir, ".teamtime")
+	configDir := filepath.Join(m.homeDir, ".teamtime")
 
-	if _, err = os.Stat(configDir); err == nil {
+	if _, err := os.Stat(configDir); err == nil {
 		return nil
 	}
 
@@ -76,14 +75,14 @@ func (m *Manager) GetFilePath() string {
 	return m.filePath
 }
 
-func NewManager() (*Manager, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get user home directory %w", err)
+func NewManager(homeDir string) (*Manager, error) {
+	if homeDir == "" {
+		return nil, ErrMissingHomeDir
 	}
 	configPath := filepath.Join(homeDir, ".teamtime", "colleagues.json")
 
 	return &Manager{
+		homeDir:  homeDir,
 		filePath: configPath,
 	}, nil
 }
