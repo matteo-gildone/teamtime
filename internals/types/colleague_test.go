@@ -280,7 +280,7 @@ func TestColleagueList_Delete(t *testing.T) {
 			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
 		}
 
-		err := cl.Delete(-1)
+		err := cl.Delete(5)
 
 		if err == nil {
 			t.Fatal("expected error, got nil")

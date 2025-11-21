@@ -61,7 +61,11 @@ func renderTable(colleagues types.ColleagueList) {
 	fmt.Printf("%-20s | %-20s | %-20s | %-20s\n", "ID", "Name", "City", "Local Time")
 	fmt.Printf("%-20s | %-20s | %-20s | %-20s\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
 	for idx, c := range colleagues {
-		loc, _ := time.LoadLocation(c.Timezone)
+		loc, err := time.LoadLocation(c.Timezone)
+		if err != nil {
+			fmt.Printf("%-20d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, "ERROR: Invalid TZ")
+			continue
+		}
 		local := now.In(loc)
 		fmt.Printf("%-20d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, local.Format("15:04 (Mon 02 Jan)"))
 	}
