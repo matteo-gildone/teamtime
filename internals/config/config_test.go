@@ -333,10 +333,10 @@ func TestManager_Load(t *testing.T) {
 			wantErr:     true,
 		},
 		{
-			name:        "file with missing fields",
+			name:        "invalid colleague missing city and timezone",
 			fileContent: `[{"name":"Alice"}]`,
 			setupFile:   true,
-			wantCount:   1,
+			wantCount:   0,
 			wantErr:     true,
 		},
 	}

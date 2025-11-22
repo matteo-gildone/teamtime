@@ -11,7 +11,11 @@ func TestColleagueList_Add(t *testing.T) {
 		colleagueName := "Maurizio"
 		colleagueCity := "Bari"
 		colleagueTZ := "Europe/Rome"
-		cl.Add(colleagueName, colleagueCity, colleagueTZ)
+		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
+
+		if err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
 
 		if len(cl) != 1 {
 			t.Errorf("expected %d, got %d instead.", 1, len(cl))
@@ -228,28 +232,30 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		cl := make(ColleagueList, len(tt.initial))
-		copy(cl, tt.initial)
+		t.Run(tt.name, func(t *testing.T) {
+			cl := make(ColleagueList, len(tt.initial))
+			copy(cl, tt.initial)
 
-		err := cl.Delete(tt.deleteIndex)
-		if err != nil {
-			t.Fatalf("expected no error, got: %v", err)
-		}
-
-		if len(cl) != tt.expectedLength {
-			t.Errorf("expected list of length %d, got %d", tt.expectedLength, len(cl))
-		}
-
-		for i, expectedName := range tt.expectedRemaining {
-			if i >= len(cl) {
-				t.Errorf("expected colleague %q at index %d, but list is too short", expectedName, i)
-				continue
+			err := cl.Delete(tt.deleteIndex)
+			if err != nil {
+				t.Fatalf("expected no error, got: %v", err)
 			}
 
-			if cl[i].Name != expectedName {
-				t.Errorf("expected %q at index %d, got %q", expectedName, i, cl[i].Name)
+			if len(cl) != tt.expectedLength {
+				t.Errorf("expected list of length %d, got %d", tt.expectedLength, len(cl))
 			}
-		}
+
+			for i, expectedName := range tt.expectedRemaining {
+				if i >= len(cl) {
+					t.Errorf("expected colleague %q at index %d, but list is too short", expectedName, i)
+					continue
+				}
+
+				if cl[i].Name != expectedName {
+					t.Errorf("expected %q at index %d, got %q", expectedName, i, cl[i].Name)
+				}
+			}
+		})
 	}
 }
 
@@ -298,17 +304,19 @@ func TestColleagueList_Delete_Errors(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		cl := make(ColleagueList, len(tt.initial))
-		copy(cl, tt.initial)
+		t.Run(tt.name, func(t *testing.T) {
+			cl := make(ColleagueList, len(tt.initial))
+			copy(cl, tt.initial)
 
-		err := cl.Delete(tt.deleteIndex)
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
+			err := cl.Delete(tt.deleteIndex)
+			if err == nil {
+				t.Fatal("expected error, got nil")
+			}
 
-		if !errors.Is(err, tt.wantErr) {
-			t.Errorf("expected error %v, got %v", tt.wantErr, err)
-		}
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("expected error %v, got %v", tt.wantErr, err)
+			}
+		})
 	}
 }
 

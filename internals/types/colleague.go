@@ -38,7 +38,7 @@ func (c *colleague) Validate() error {
 		return ErrMissingTimezone
 	}
 
-	if _, err := time.LoadLocation(c.Timezone); err != nil {
+	if _, err := time.LoadLocation(tz); err != nil {
 		return err
 	}
 
