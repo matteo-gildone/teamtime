@@ -177,133 +177,139 @@ func TestColleague_Add_InvalidTimezones(t *testing.T) {
 	}
 }
 
-func TestColleagueList_Delete(t *testing.T) {
-	t.Run("delete middle colleague", func(t *testing.T) {
-		cl := ColleagueList{
-			{Name: "Alice", City: "London", Timezone: "Europe/London"},
-			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
-			{Name: "Daisuke", City: "Tokio", Timezone: "Asia/Tokio"},
-		}
+func TestColleagueList_Delete_Success(t *testing.T) {
+	tests := []struct {
+		name              string
+		initial           ColleagueList
+		deleteIndex       int
+		expectedLength    int
+		expectedRemaining []string
+	}{
+		{
+			name: "delete first colleague",
+			initial: ColleagueList{
+				{Name: "Alice", City: "London", Timezone: "Europe/London"},
+				{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
+			},
+			deleteIndex:       1,
+			expectedLength:    1,
+			expectedRemaining: []string{"Bob"},
+		},
+		{
+			name: "delete middle colleague",
+			initial: ColleagueList{
+				{Name: "Alice", City: "London", Timezone: "Europe/London"},
+				{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
+				{Name: "Daisuke", City: "Tokyo", Timezone: "Asia/Tokyo"},
+			},
+			deleteIndex:       2,
+			expectedLength:    2,
+			expectedRemaining: []string{"Alice", "Daisuke"},
+		},
+		{
+			name: "delete last colleague",
+			initial: ColleagueList{
+				{Name: "Alice", City: "London", Timezone: "Europe/London"},
+				{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
+			},
+			deleteIndex:       2,
+			expectedLength:    1,
+			expectedRemaining: []string{"Alice"},
+		},
+		{
+			name: "delete only colleague",
+			initial: ColleagueList{
+				{Name: "Alice", City: "London", Timezone: "Europe/London"},
+			},
+			deleteIndex:       1,
+			expectedLength:    0,
+			expectedRemaining: []string{},
+		},
+	}
 
-		if err := cl.Delete(2); err != nil {
+	for _, tt := range tests {
+		cl := make(ColleagueList, len(tt.initial))
+		copy(cl, tt.initial)
+
+		err := cl.Delete(tt.deleteIndex)
+		if err != nil {
 			t.Fatalf("expected no error, got: %v", err)
 		}
 
-		if len(cl) != 2 {
-			t.Errorf("expected list length %d, got %d instead.", 2, len(cl))
+		if len(cl) != tt.expectedLength {
+			t.Errorf("expected list of length %d, got %d", tt.expectedLength, len(cl))
 		}
 
-		if cl[0].Name != "Alice" {
-			t.Errorf("expected %q, got %q instead.", "Alice", cl[0].Name)
+		for i, expectedName := range tt.expectedRemaining {
+			if i >= len(cl) {
+				t.Errorf("expected colleague %q at index %d, but list is too short", expectedName, i)
+				continue
+			}
+
+			if cl[i].Name != expectedName {
+				t.Errorf("expected %q at index %d, got %q", expectedName, i, cl[i].Name)
+			}
 		}
+	}
+}
 
-		if cl[1].Name != "Daisuke" {
-			t.Errorf("expected %q, got %q instead.", "Daisuke", cl[1].Name)
-		}
-	})
+func TestColleagueList_Delete_Errors(t *testing.T) {
+	tests := []struct {
+		name        string
+		initial     ColleagueList
+		deleteIndex int
+		wantErr     error
+	}{
+		{
+			name:        "remove from empty list",
+			initial:     ColleagueList{},
+			deleteIndex: 1,
+			wantErr:     ErrEmptyList,
+		},
+		{
+			name:        "index 0",
+			initial:     ColleagueList{{Name: "Alice", City: "London", Timezone: "Europe/London"}},
+			deleteIndex: 0,
+			wantErr:     ErrorInvalidIndex,
+		},
+		{
+			name:        "negative index",
+			initial:     ColleagueList{{Name: "Alice", City: "London", Timezone: "Europe/London"}},
+			deleteIndex: -1,
+			wantErr:     ErrorInvalidIndex,
+		},
+		{
+			name: "index too large",
+			initial: ColleagueList{
+				{Name: "Alice", City: "London", Timezone: "Europe/London"},
+				{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
+			},
+			deleteIndex: 5,
+			wantErr:     ErrorInvalidIndex,
+		},
+		{
+			name: "index one past end",
+			initial: ColleagueList{
+				{Name: "Alice", City: "London", Timezone: "Europe/London"},
+			},
+			deleteIndex: 2,
+			wantErr:     ErrorInvalidIndex,
+		},
+	}
 
-	t.Run("delete first colleague", func(t *testing.T) {
-		cl := ColleagueList{
-			{Name: "Alice", City: "London", Timezone: "Europe/London"},
-			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
-		}
+	for _, tt := range tests {
+		cl := make(ColleagueList, len(tt.initial))
+		copy(cl, tt.initial)
 
-		if err := cl.Delete(1); err != nil {
-			t.Fatalf("expected no error, got: %v", err)
-		}
-
-		if len(cl) != 1 {
-			t.Errorf("expected list length %d, got %d instead.", 1, len(cl))
-		}
-
-		if cl[0].Name != "Bob" {
-			t.Errorf("expected Bob, got %s instead.", cl[0].Name)
-		}
-	})
-
-	t.Run("delete last colleague", func(t *testing.T) {
-		cl := ColleagueList{
-			{Name: "Alice", City: "London", Timezone: "Europe/London"},
-			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
-		}
-
-		if err := cl.Delete(2); err != nil {
-			t.Fatalf("expected no error, got: %v", err)
-		}
-
-		if len(cl) != 1 {
-			t.Errorf("expected list length %d, got %d instead.", 1, len(cl))
-		}
-
-		if cl[0].Name != "Alice" {
-			t.Errorf("expected Alice, got %s instead.", cl[0].Name)
-		}
-	})
-
-	t.Run("delete with index 0", func(t *testing.T) {
-		cl := ColleagueList{
-			{Name: "Alice", City: "London", Timezone: "Europe/London"},
-			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
-		}
-
-		err := cl.Delete(0)
-
+		err := cl.Delete(tt.deleteIndex)
 		if err == nil {
 			t.Fatal("expected error, got nil")
 		}
 
-		if !errors.Is(err, ErrorInvalidIndex) {
-			t.Errorf("expected ErrorInvalidIndex, got %v", err)
+		if !errors.Is(err, tt.wantErr) {
+			t.Errorf("expected error %v, got %v", tt.wantErr, err)
 		}
-	})
-
-	t.Run("delete with negative index", func(t *testing.T) {
-		cl := ColleagueList{
-			{Name: "Alice", City: "London", Timezone: "Europe/London"},
-			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
-		}
-
-		err := cl.Delete(-1)
-
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-
-		if !errors.Is(err, ErrorInvalidIndex) {
-			t.Errorf("expected ErrorInvalidIndex, got %v", err)
-		}
-	})
-
-	t.Run("delete with index too large", func(t *testing.T) {
-		cl := ColleagueList{
-			{Name: "Alice", City: "London", Timezone: "Europe/London"},
-			{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
-		}
-
-		err := cl.Delete(5)
-
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-
-		if !errors.Is(err, ErrorInvalidIndex) {
-			t.Errorf("expected ErrorInvalidIndex, got %v", err)
-		}
-	})
-
-	t.Run("delete from empty list", func(t *testing.T) {
-		cl := ColleagueList{}
-
-		err := cl.Delete(1)
-
-		if err == nil {
-			t.Fatal("expected error, got nil")
-		}
-
-		if !errors.Is(err, ErrEmptyList) {
-			t.Errorf("expected ErrEmptyList, got %v", err)
-		}
-	})
+	}
 }
 
 func TestNewColleagues(t *testing.T) {
