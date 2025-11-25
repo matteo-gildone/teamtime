@@ -15,13 +15,13 @@ var (
 	ErrEmptyList       = errors.New("colleagues list is empty")
 )
 
-type colleague struct {
+type Colleague struct {
 	Name     string `json:"name"`
 	City     string `json:"city"`
 	Timezone string `json:"timezone"`
 }
 
-func (c *colleague) Validate() error {
+func (c *Colleague) Validate() error {
 	name := strings.TrimSpace(c.Name)
 	city := strings.TrimSpace(c.City)
 	tz := strings.TrimSpace(c.Timezone)
@@ -45,13 +45,13 @@ func (c *colleague) Validate() error {
 	return nil
 }
 
-type ColleagueList []colleague
+type ColleagueList []Colleague
 
 func (cl *ColleagueList) Add(name, city, tz string) error {
 	name = strings.TrimSpace(name)
 	city = strings.TrimSpace(city)
 	tz = strings.TrimSpace(tz)
-	newCol := colleague{
+	newCol := Colleague{
 		Name:     name,
 		City:     city,
 		Timezone: tz,
@@ -65,19 +65,20 @@ func (cl *ColleagueList) Add(name, city, tz string) error {
 	return nil
 }
 
-func (cl *ColleagueList) Delete(i int) error {
+func (cl *ColleagueList) Delete(idx int) (Colleague, error) {
 	ls := *cl
 
 	if len(ls) == 0 {
-		return ErrEmptyList
+		return Colleague{}, ErrEmptyList
 	}
 
-	if i <= 0 || i > len(ls) {
-		return fmt.Errorf("%w: %d (must be a number between 1 and %d)", ErrorInvalidIndex, i, len(ls))
+	if idx <= 0 || idx > len(ls) {
+		return Colleague{}, fmt.Errorf("%w: %d (must be a number between 1 and %d)", ErrorInvalidIndex, idx, len(ls))
 	}
+	deleted := ls[idx-1]
 
-	*cl = append(ls[:i-1], ls[i:]...)
-	return nil
+	*cl = append(ls[:idx-1], ls[idx:]...)
+	return deleted, nil
 }
 
 func NewColleagues() *ColleagueList {

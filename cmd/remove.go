@@ -29,20 +29,16 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ls := *colleagues
-	if idx <= 0 || idx > len(ls) {
-		return fmt.Errorf("invalid index %d", idx)
-	}
-	removedName := ls[idx-1].Name
+	removed, err := colleagues.Delete(idx)
 
-	if err = colleagues.Delete(idx); err != nil {
+	if err != nil {
 		return fmt.Errorf("failed remove 'colleagues.json' in: %w", err)
 	}
 
 	if err = m.Save(colleagues); err != nil {
 		return fmt.Errorf("failed to save: %w", err)
 	}
-	fmt.Printf("%s was removed\n", removedName)
+	fmt.Printf("%s was removed\n", removed.Name)
 	return nil
 }
 

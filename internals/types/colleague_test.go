@@ -186,6 +186,7 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 		name              string
 		initial           ColleagueList
 		deleteIndex       int
+		expectedDeleted   string
 		expectedLength    int
 		expectedRemaining []string
 	}{
@@ -196,6 +197,7 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 				{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
 			},
 			deleteIndex:       1,
+			expectedDeleted:   "Alice",
 			expectedLength:    1,
 			expectedRemaining: []string{"Bob"},
 		},
@@ -207,6 +209,7 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 				{Name: "Daisuke", City: "Tokyo", Timezone: "Asia/Tokyo"},
 			},
 			deleteIndex:       2,
+			expectedDeleted:   "Bob",
 			expectedLength:    2,
 			expectedRemaining: []string{"Alice", "Daisuke"},
 		},
@@ -217,6 +220,7 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 				{Name: "Bob", City: "NYC", Timezone: "America/New_York"},
 			},
 			deleteIndex:       2,
+			expectedDeleted:   "Bob",
 			expectedLength:    1,
 			expectedRemaining: []string{"Alice"},
 		},
@@ -226,6 +230,7 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 				{Name: "Alice", City: "London", Timezone: "Europe/London"},
 			},
 			deleteIndex:       1,
+			expectedDeleted:   "Alice",
 			expectedLength:    0,
 			expectedRemaining: []string{},
 		},
@@ -236,9 +241,13 @@ func TestColleagueList_Delete_Success(t *testing.T) {
 			cl := make(ColleagueList, len(tt.initial))
 			copy(cl, tt.initial)
 
-			err := cl.Delete(tt.deleteIndex)
+			deleted, err := cl.Delete(tt.deleteIndex)
 			if err != nil {
 				t.Fatalf("expected no error, got: %v", err)
+			}
+
+			if deleted.Name != tt.expectedDeleted {
+				t.Errorf("expected to delete %s, got: %s", tt.expectedDeleted, deleted.Name)
 			}
 
 			if len(cl) != tt.expectedLength {
@@ -308,7 +317,7 @@ func TestColleagueList_Delete_Errors(t *testing.T) {
 			cl := make(ColleagueList, len(tt.initial))
 			copy(cl, tt.initial)
 
-			err := cl.Delete(tt.deleteIndex)
+			_, err := cl.Delete(tt.deleteIndex)
 			if err == nil {
 				t.Fatal("expected error, got nil")
 			}

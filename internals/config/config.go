@@ -45,9 +45,9 @@ func (m *Manager) Load() (*types.ColleagueList, error) {
 		return nil, err
 	}
 
-	for _, c := range *cl {
+	for i, c := range *cl {
 		if err = c.Validate(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("colleague at index %d: %w", i+1, err)
 		}
 	}
 

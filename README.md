@@ -1,2 +1,117 @@
-# Teamtime
-CLI app to find out what time it is in your team members location
+# TeamTime
+
+A CLI tool to view local times and weather for your distributed team members.
+
+## Installation
+```bash
+go install github.com/matteo-gildone/teamtime@latest
+```
+
+Or build from source:
+```bash
+git clone https://github.com/matteo-gildone/teamtime.git
+cd teamtime
+go build -o teamtime
+```
+
+## Quick Start
+```bash
+# Initialize the app
+teamtime init
+
+# Add team members
+teamtime add "Alice" "London" "Europe/London"
+teamtime add "Priya" "Pune" "Asia/Kolkata"
+teamtime add "Lucio" "Poggibonsi" "Europe/Rome"
+
+# View everyone's local time
+teamtime check all
+
+# View specific team member
+teamtime check Alice
+```
+
+## Commands
+
+### `init`
+Initialize TeamTime configuration directory (`~/.teamtime`)
+```bash
+teamtime init
+```
+
+### `add`
+Add a new team member
+```bash
+teamtime add <name> <city> <timezone>
+
+# Example
+teamtime add "Bob" "Berlin" "Europe/Berlin"
+```
+
+Find valid timezone names at [Wikipedia - List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+### `check`
+Display current local time for all team members
+```bash
+teamtime check all
+```
+
+Output:
+```
+ID                   | Name                 | City                 | Local Time          
+-------------------- | -------------------- | -------------------- | --------------------
+1                    | Alice                | London               | 09:30 (Mon 20 Nov)
+2                    | Priya                | Pune                 | 15:00 (Mon 20 Nov)
+3                    | Marco                | Genova               | 10:30 (Mon 20 Nov)
+```
+
+Display current local time for a particular team members
+```bash
+teamtime check <name>
+
+# Example
+teamtime check Alice
+```
+
+Output:
+```
+ID                   | Name                 | City                 | Local Time          
+-------------------- | -------------------- | -------------------- | --------------------
+1                    | Alice                | London               | 09:30 (Mon 20 Nov)
+```
+
+### `remove`
+Remove a team member by ID
+```bash
+teamtime remove <id>
+
+# Example
+teamtime remove 2
+```
+
+## Configuration
+
+TeamTime stores data in `~/.teamtime/colleagues.json`
+
+## Roadmap
+
+- [ ] Add UI package
+- [ ] Weather information with concurrent API calls
+- [ ] Time zone conversion helpers
+- [ ] Find optimal meeting times
+
+## Development
+```bash
+# Run tests
+go test ./...
+
+# Run tests with coverage
+go test -cover ./...
+
+# Build
+go build -o teamtime
+```
+
+## License
+
+MIT
