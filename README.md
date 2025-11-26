@@ -1,5 +1,9 @@
 # TeamTime
 
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](https://go.dev/) 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/matteo-gildone/teamtime)](https://goreportcard.com/report/github.com/matteo-gildone/teamtime)
+
 A CLI tool to view local times and weather for your distributed team members.
 
 ## Installation
@@ -13,6 +17,10 @@ git clone https://github.com/matteo-gildone/teamtime.git
 cd teamtime
 go build -o teamtime
 ```
+
+## Demo
+
+![TeamTime Demo](img/demo.gif)
 
 ## Quick Start
 ```bash
