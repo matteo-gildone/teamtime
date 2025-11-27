@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/matteo-gildone/teamtime/internals/types"
@@ -87,9 +88,11 @@ func TestManager_EnsureFolder(t *testing.T) {
 			t.Error("expected path to be a directory")
 		}
 
-		expectedPerm := os.FileMode(0755)
-		if info.Mode().Perm() != expectedPerm {
-			t.Errorf("expected permission 0775, got %04o", info.Mode().Perm())
+		if runtime.GOOS != "windows" {
+			expectedPerm := os.FileMode(0755)
+			if info.Mode().Perm() != expectedPerm {
+				t.Errorf("expected permission 0755, got %04o", info.Mode().Perm())
+			}
 		}
 	})
 	t.Run("succeeds when folder already exists", func(t *testing.T) {
