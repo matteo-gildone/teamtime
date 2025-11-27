@@ -1,8 +1,9 @@
 # TeamTime
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](https://go.dev/) 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) 
+[![Test](https://github.com/matteo-gildone/teamtime/actions/workflows/test.yml/badge.svg)](https://github.com/matteo-gildone/teamtime/actions/workflows/test.yml)
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](https://go.dev/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/matteo-gildone/teamtime)](https://goreportcard.com/report/github.com/matteo-gildone/teamtime)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A CLI tool to view local times and weather for your distributed team members.
 
