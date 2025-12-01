@@ -17,11 +17,12 @@ const (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialise project",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := initFunc()
 		if err != nil {
-			fmt.Println(fmt.Errorf("init command:%w", err))
+			return fmt.Errorf("init command:%w", err)
 		}
+		return nil
 	},
 }
 
