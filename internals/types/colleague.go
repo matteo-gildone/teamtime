@@ -77,7 +77,9 @@ func (cl *ColleagueList) Delete(idx int) (Colleague, error) {
 	}
 	deleted := ls[idx-1]
 
-	*cl = append(ls[:idx-1], ls[idx:]...)
+	copy(ls[idx-1:], ls[idx:])
+	ls[len(ls)-1] = Colleague{}
+	*cl = ls[:len(ls)-1]
 	return deleted, nil
 }
 
