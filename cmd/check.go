@@ -25,7 +25,7 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(*colleagues) == 0 {
-		fmt.Println("no colleague present")
+		fmt.Println("no colleague found")
 		return nil
 	}
 
@@ -42,7 +42,7 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(filteredColleagues) == 0 {
-		fmt.Printf("no colleague found with name: %s\n", args[0])
+		fmt.Printf("no colleague found with name: %q\n", args[0])
 		return nil
 	}
 

@@ -18,7 +18,7 @@ var removeCmd = &cobra.Command{
 func removeFunc(cmd *cobra.Command, args []string) error {
 	idx, err := strconv.Atoi(args[0])
 	if err != nil {
-		return fmt.Errorf("idx must be a number %w", err)
+		return fmt.Errorf("index must be a number %w", err)
 	}
 	m, err := GetManager(cmd.Context())
 	if err != nil {
@@ -32,11 +32,11 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 	removed, err := colleagues.Delete(idx)
 
 	if err != nil {
-		return fmt.Errorf("failed remove 'colleagues.json' in: %w", err)
+		return fmt.Errorf("cannot remove colleague at index %d: %w", idx, err)
 	}
 
 	if err = m.Save(colleagues); err != nil {
-		return fmt.Errorf("failed to save: %w", err)
+		return fmt.Errorf("failed to save to %s: %w\nNote: %s was not removed due to save failure", m.GetFilePath(), err, removed.Name)
 	}
 	fmt.Printf("%s was removed\n", removed.Name)
 	return nil
