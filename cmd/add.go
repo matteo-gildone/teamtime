@@ -26,13 +26,13 @@ func addFunc(cmd *cobra.Command, args []string) error {
 	err = colleagues.Add(args[0], args[1], args[2])
 
 	if err != nil {
-		return fmt.Errorf("failed add colleague: %w", err)
+		return fmt.Errorf("invalid colleague data: %w", err)
 	}
 
 	err = m.Save(colleagues)
 
 	if err != nil {
-		return fmt.Errorf("failed save 'colleagues.json' in: %w", err)
+		return fmt.Errorf("failed to save to '%s' in: %w", m.GetFilePath(), err)
 	}
 
 	fmt.Printf("%s was added\n", args[0])
