@@ -1,31 +1,43 @@
-.PHONY: build test clean install lint
+MODULE  := $(shell go list -m)
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 
-# Build the binary
-build:
-	go build -o bin/teamtime main.go
+.PHONY: build test test-coverage clean clean-all install lint check pkgdev help
 
-# Run tests
-test:
-	go test -v ./...
+.DEFAULT_GOAL := help
 
-# Run tests with coverage
-test-coverage:
-	go test -v -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out -o coverage.html
+help: ## Show available targets
+	@echo "TeamTime Makefile"
+	@echo ""
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 
-# Clean build artifacts
-clean:
-	rm -rf bin/
-	rm -f coverage.out coverage.html
+build: ## Build the binary
+	@mkdir -p bin
+	@go build -trimpath -ldflags="-s -w" -o bin/teamtime .
 
-# Install the binary
-install:
-	go install main.go
+test: ## Run tests with race detector
+	@go test -v -race ./...
 
-# Lint the code
-lint:
-	go vet ./...
-	go fmt ./...
+test-coverage: ## Run tests with coverage
+	@go test -v -race -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out -o coverage.html
+	@echo "→ Coverage: $$(go tool cover -func=coverage.out | grep total | awk '{print $$3}')"
 
-# Run all checks
-check: lint test
+clean: ## Clean build artifacts
+	@rm -rf bin/ dist/ coverage.out coverage.html
+	@go clean -cache -testcache
+
+clean-all: clean ## Also clean module cache (WARNING: affects all Go projects)
+	@echo "Cleaning module cache..."
+	@go clean -modcache
+
+lint: ## Format and vet code
+	@gofmt -l -s -w .
+	@go vet ./...
+
+check: lint test ## Run all checks
+
+pkgdev: ## Trigger pkg.go.dev indexing
+	@test -n "$(VERSION)" || (echo "No git tag found"; exit 1)
+	@curl -fsS https://proxy.golang.org/$(MODULE)/@v/$(VERSION){.info,.mod,.zip} >/dev/null || true
+	@echo "→ https://pkg.go.dev/$(MODULE)@$(VERSION)"
