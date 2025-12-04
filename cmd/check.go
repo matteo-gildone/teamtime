@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/matteo-gildone/teamtime/internals/styles"
 	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
 )
@@ -52,22 +53,24 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 }
 
 func renderTable(colleagues types.ColleagueList) {
+	highlight := styles.NewStyles().Bold().Cyan()
+	invalidTZ := styles.NewStyles().Bold().Red()
 	if len(colleagues) == 0 {
 		return
 	}
 	now := time.Now()
 
 	fmt.Println()
-	fmt.Printf("%-20s | %-20s | %-20s | %-20s\n", "ID", "Name", "City", "Local Time")
-	fmt.Printf("%-20s | %-20s | %-20s | %-20s\n", strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	fmt.Printf("%-4s | %-20s | %-20s | %-20s\n", "ID", "Name", "City", "Local Time")
+	fmt.Printf("%-4s | %-20s | %-20s | %-20s\n", strings.Repeat("-", 4), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
 	for idx, c := range colleagues {
 		loc, err := time.LoadLocation(c.Timezone)
 		if err != nil {
-			fmt.Printf("%-20d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, "ERROR: Invalid TZ")
+			fmt.Printf("%-d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, invalidTZ.Render("ERROR: Invalid TZ"))
 			continue
 		}
 		local := now.In(loc)
-		fmt.Printf("%-20d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, local.Format("15:04 (Mon 02 Jan)"))
+		fmt.Printf("%-4d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, highlight.Render(local.Format("15:04 (Mon 02 Jan)")))
 	}
 	fmt.Println()
 }
