@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/matteo-gildone/teamtime/internals/styles"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +39,11 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 	if err = m.Save(colleagues); err != nil {
 		return fmt.Errorf("failed to save: %w", err)
 	}
-	fmt.Printf("%s was removed\n", removed.Name)
+	successStyle := styles.NewStyles().Green()
+	successMessage := fmt.Sprintf("✓ %s was removed\n", removed.Name)
+	styledSuccessMessage := successStyle.Render(successMessage)
+	fmt.Println()
+	fmt.Println(styledSuccessMessage)
 	return nil
 }
 

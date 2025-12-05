@@ -13,52 +13,59 @@ func init() {
 		os.Getenv("TERM") == ""
 }
 
-type Styles struct {
+type Style struct {
 	codes []string
 }
 
-func NewStyles() Styles {
-	return Styles{
+func NewStyles() Style {
+	return Style{
 		codes: []string{},
 	}
 }
 
-func (s Styles) addCode(code string) Styles {
-	newCodes := make([]string, len(s.codes), len(s.codes)+1)
-	copy(newCodes, s.codes)
-	s.codes = append(newCodes, code)
-	return s
+func (s Style) addCode(code string) Style {
+	codes := append([]string(nil), s.codes...)
+	codes = append(codes, code)
+	return Style{codes: codes}
 }
 
 // Text styles
 
-func (s Styles) Bold() Styles {
+func (s Style) Bold() Style {
 	return s.addCode("1")
 }
 
-func (s Styles) Dim() Styles {
+func (s Style) Dim() Style {
 	return s.addCode("2")
 }
 
-func (s Styles) Italic() Styles {
+func (s Style) Italic() Style {
 	return s.addCode("3")
 }
 
-func (s Styles) Underline() Styles {
+func (s Style) Underline() Style {
 	return s.addCode("4")
 }
 
 // Foreground colors
 
-func (s Styles) Red() Styles {
+func (s Style) Red() Style {
 	return s.addCode("31")
 }
 
-func (s Styles) Cyan() Styles {
+func (s Style) Green() Style {
+	return s.addCode("32")
+}
+
+func (s Style) Yellow() Style {
+	return s.addCode("33")
+}
+
+func (s Style) Cyan() Style {
 	return s.addCode("36")
 }
 
-func (s Styles) Render(text string) string {
+func (s Style) Render(text string) string {
 	if len(s.codes) == 0 || noColor {
 		return text
 	}

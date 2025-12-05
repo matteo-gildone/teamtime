@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/matteo-gildone/teamtime/internals/styles"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +36,11 @@ func addFunc(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed save 'colleagues.json' in: %w", err)
 	}
 
-	fmt.Printf("%s was added\n", args[0])
+	successStyle := styles.NewStyles().Green()
+	successMessage := fmt.Sprintf("✓ %s was added\n", args[0])
+	styledSuccessMessage := successStyle.Render(successMessage)
+	fmt.Println()
+	fmt.Println(styledSuccessMessage)
 	return nil
 }
 

@@ -52,25 +52,29 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 
 }
 
+// TODO: make it generic, maybe a ui package
 func renderTable(colleagues types.ColleagueList) {
-	highlight := styles.NewStyles().Bold().Cyan()
-	invalidTZ := styles.NewStyles().Bold().Red()
+	plainStyle := styles.NewStyles()
+	heading := plainStyle.Bold()
+	highlight := heading.Cyan()
+	invalidTZ := heading.Red()
 	if len(colleagues) == 0 {
 		return
 	}
 	now := time.Now()
 
 	fmt.Println()
-	fmt.Printf("%-4s | %-20s | %-20s | %-20s\n", "ID", "Name", "City", "Local Time")
+	// TODO: improve the style package, deal with padding inside the render method
+	fmt.Printf("%s | %s | %-20s | %-20s\n", heading.Render(fmt.Sprintf("%-4s", "ID")), heading.Render(fmt.Sprintf("%-20s", "Name")), heading.Render(fmt.Sprintf("%-20s", "City")), heading.Render(fmt.Sprintf("%-20s", "Local Time")))
 	fmt.Printf("%-4s | %-20s | %-20s | %-20s\n", strings.Repeat("-", 4), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
 	for idx, c := range colleagues {
 		loc, err := time.LoadLocation(c.Timezone)
 		if err != nil {
-			fmt.Printf("%-d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, invalidTZ.Render("ERROR: Invalid TZ"))
+			fmt.Printf("%-4d | %-20s | %-20s | %s\n", idx+1, c.Name, c.City, invalidTZ.Render(fmt.Sprintf("%-20s", "ERROR: Invalid TZ")))
 			continue
 		}
 		local := now.In(loc)
-		fmt.Printf("%-4d | %-20s | %-20s | %-20s\n", idx+1, c.Name, c.City, highlight.Render(local.Format("15:04 (Mon 02 Jan)")))
+		fmt.Printf("%-4d | %-20s | %-20s | %s\n", idx+1, c.Name, c.City, highlight.Render(fmt.Sprintf("%-20s", local.Format("15:04 (Mon 02 Jan)"))))
 	}
 	fmt.Println()
 }
