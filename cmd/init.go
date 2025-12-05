@@ -43,7 +43,7 @@ func initFunc() error {
 	}
 
 	if m.Exists() {
-		return fmt.Errorf("app already initialised app in %s\n", m.GetFilePath())
+		return fmt.Errorf("app already initialised app in %s\n", m.GetRelativeFilePath())
 	}
 
 	if err = m.EnsureFolder(); err != nil {
@@ -64,6 +64,6 @@ func initFunc() error {
 
 	successStyle := styles.NewStyles().Green()
 	fmt.Println()
-	fmt.Println(successStyle.Render(fmt.Sprintf("Initialised app in: %s", m.GetFilePath())))
+	fmt.Println(successStyle.Render(fmt.Sprintf("Initialised app in: %s", m.GetRelativeFilePath())))
 	return nil
 }
