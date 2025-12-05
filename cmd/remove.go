@@ -40,7 +40,6 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to save to %s: %w\nNote: %s was not removed due to save failure", m.GetFilePath(), err, removed.Name)
 	}
 	successStyle := styles.NewStyles().Green()
-	fmt.Println()
 	fmt.Println(successStyle.Render(fmt.Sprintf("✓ %s was removed", removed.Name)))
 	return nil
 }
