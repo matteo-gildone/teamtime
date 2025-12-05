@@ -11,11 +11,8 @@ func TestColleagueList_Add(t *testing.T) {
 		colleagueName := "Maurizio"
 		colleagueCity := "Bari"
 		colleagueTZ := "Europe/Rome"
-		err := cl.Add(colleagueName, colleagueCity, colleagueTZ)
-
-		if err != nil {
-			t.Fatalf("expected no error, got: %v", err)
-		}
+		colleague, _ := NewColleague(colleagueName, colleagueCity, colleagueTZ)
+		cl.Add(colleague)
 
 		if len(cl) != 1 {
 			t.Errorf("expected %d, got %d instead.", 1, len(cl))
@@ -43,10 +40,11 @@ func TestColleagueList_Add(t *testing.T) {
 		cl := ColleagueList{}
 
 		for _, colleague := range colleagues {
-			err := cl.Add(colleague[0], colleague[1], colleague[2])
+			newColleague, err := NewColleague(colleague[0], colleague[1], colleague[2])
 			if err != nil {
 				t.Errorf("%v", err)
 			}
+			cl.Add(newColleague)
 		}
 
 		if len(cl) != 3 {
@@ -70,7 +68,7 @@ func TestColleagueList_Add(t *testing.T) {
 	})
 }
 
-func TestColleague_Add_Validation(t *testing.T) {
+func TestColleague_NewColleague_Validation(t *testing.T) {
 	tests := []struct {
 		name      string
 		inputName string
@@ -124,8 +122,7 @@ func TestColleague_Add_Validation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cl := ColleagueList{}
-			err := cl.Add(tt.inputName, tt.inputCity, tt.inputTZ)
+			_, err := NewColleague(tt.inputName, tt.inputCity, tt.inputTZ)
 
 			if err == nil {
 				t.Fatal("expected error, got nil")
@@ -138,7 +135,7 @@ func TestColleague_Add_Validation(t *testing.T) {
 	}
 }
 
-func TestColleague_Add_InvalidTimezones(t *testing.T) {
+func TestColleague_NewColleague_Validation_InvalidTimezones(t *testing.T) {
 	tests := []struct {
 		name    string
 		inputTZ string
@@ -167,8 +164,7 @@ func TestColleague_Add_InvalidTimezones(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cl := ColleagueList{}
-			err := cl.Add("Test", "City", tt.inputTZ)
+			_, err := NewColleague("Test", "City", tt.inputTZ)
 
 			if err == nil {
 				t.Fatalf("expected error for timezone %s, got nil", tt.inputTZ)

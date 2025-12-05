@@ -207,10 +207,11 @@ func TestManager_Save(t *testing.T) {
 			cl := types.NewColleagues()
 
 			for _, c := range tt.colleagues {
-				err := cl.Add(c.name, c.city, c.tz)
+				colleague, err := types.NewColleague(c.name, c.city, c.tz)
 				if err != nil {
 					t.Fatalf("failed to add colleague: %v", err)
 				}
+				cl.Add(colleague)
 			}
 
 			err := m.Save(cl)
@@ -255,15 +256,23 @@ func TestManager_Save(t *testing.T) {
 
 		// Save initial data
 		cl1 := types.NewColleagues()
-		cl1.Add("Alice", "London", "Europe/London")
-		err := m.Save(cl1)
+		colleague, err := types.NewColleague("Alice", "London", "Europe/London")
+		if err != nil {
+			t.Fatalf("failed to add colleague: %v", err)
+		}
+		cl1.Add(colleague)
+		err = m.Save(cl1)
 		if err != nil {
 			t.Fatalf("first save failed: %v", err)
 		}
 
 		// Save new data (overwrites)
 		cl2 := types.NewColleagues()
-		cl2.Add("Bob", "NYC", "America/New_York")
+		colleague2, err := types.NewColleague("Bob", "NYC", "America/New_York")
+		if err != nil {
+			t.Fatalf("failed to add colleague: %v", err)
+		}
+		cl2.Add(colleague2)
 		err = m.Save(cl2)
 		if err != nil {
 			t.Fatalf("second save failed: %v", err)
@@ -469,10 +478,11 @@ func TestManager_Integration(t *testing.T) {
 			// Create and save data
 			original := types.NewColleagues()
 			for _, c := range tt.colleagues {
-				err := original.Add(c.name, c.city, c.tz)
+				colleague, err := types.NewColleague(c.name, c.city, c.tz)
 				if err != nil {
 					t.Fatalf("failed to add colleague: %v", err)
 				}
+				original.Add(colleague)
 			}
 
 			err := m.Save(original)
