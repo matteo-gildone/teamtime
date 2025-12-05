@@ -10,10 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	appDir = ".teamtime"
-)
-
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
