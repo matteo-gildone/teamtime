@@ -55,7 +55,6 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 func renderTable(colleagues types.ColleagueList) {
 	plainStyle := styles.NewStyles()
 	heading := plainStyle.Bold()
-	highlight := heading.Cyan()
 	invalidTZ := heading.Red()
 	if len(colleagues) == 0 {
 		return
@@ -63,18 +62,60 @@ func renderTable(colleagues types.ColleagueList) {
 	now := time.Now()
 
 	fmt.Println()
-	fmt.Printf("%s | %s | %-20s | %-20s\n", heading.Render(fmt.Sprintf("%-4s", "ID")), heading.Render(fmt.Sprintf("%-20s", "Name")), heading.Render(fmt.Sprintf("%-20s", "City")), heading.Render(fmt.Sprintf("%-20s", "Local Time")))
-	fmt.Printf("%-4s | %-20s | %-20s | %-20s\n", strings.Repeat("-", 4), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
+	fmt.Printf("%s | %s | %s\n",
+		heading.Render(fmt.Sprintf("%-4s", "ID")),
+		heading.Render(fmt.Sprintf("%-20s", "Name")),
+		heading.Render(fmt.Sprintf("%-32s", "Local Time")))
+
+	fmt.Printf("%-4s | %-20s | %-20s\n",
+		strings.Repeat("-", 4),
+		strings.Repeat("-", 20),
+		strings.Repeat("-", 32))
 	for idx, c := range colleagues {
 		loc, err := time.LoadLocation(c.Timezone)
 		if err != nil {
-			fmt.Printf("%-4d | %-20s | %-20s | %s\n", idx+1, c.Name, c.City, invalidTZ.Render(fmt.Sprintf("%-20s", "ERROR: Invalid TZ")))
+			fmt.Printf("%-4d | %-20s | %s\n",
+				idx+1,
+				c.Name,
+				invalidTZ.Render(fmt.Sprintf("%-32s", "ERROR: Invalid TZ")))
 			continue
 		}
 		local := now.In(loc)
-		fmt.Printf("%-4d | %-20s | %-20s | %s\n", idx+1, c.Name, c.City, highlight.Render(fmt.Sprintf("%-20s", local.Format("15:04 (Mon 02 Jan)"))))
+		timeDisplay := getDisplayTime(local)
+		fmt.Printf("%-4d | %-20s | %s\n",
+			idx+1,
+			c.Name,
+			timeDisplay)
 	}
 	fmt.Println()
+	renderLegend()
+}
+
+func getDisplayTime(localTime time.Time) string {
+	hour := localTime.Hour()
+	timeStr := localTime.Format("15:04 (Mon 02 Jan)")
+
+	base := styles.NewStyles().Bold()
+
+	// Work hours: 9am-5pm
+
+	if hour >= 9 && hour < 17 {
+		return base.Cyan().Render(fmt.Sprintf("%-32s", timeStr))
+	}
+
+	if (hour >= 7 && hour < 9) || (hour >= 17 && hour < 19) {
+		return base.Yellow().Render(fmt.Sprintf("%-32s", timeStr+" [Extended]"))
+	}
+
+	return base.Red().Render(fmt.Sprintf("%-32s", timeStr+" [Off]"))
+}
+
+func renderLegend() {
+	plain := styles.NewStyles()
+	fmt.Println(plain.Render("Availability:"))
+	fmt.Println(plain.Cyan().Bold().Render("    Cyan") + " - Work hours (9am-5pm)")
+	fmt.Println(plain.Yellow().Bold().Render("    Yellow") + " - Extended hours")
+	fmt.Println(plain.Red().Bold().Render("    Red") + " - Off hours")
 }
 
 func init() {
