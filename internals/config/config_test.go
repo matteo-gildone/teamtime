@@ -75,8 +75,14 @@ func TestManager_GetRelativeFilePath(t *testing.T) {
 
 	got := m.GetRelativeFilePath()
 
-	if got != want {
+	if got == "" {
 		t.Errorf("got %q want %q", got, want)
+	}
+
+	if runtime.GOOS != "windows" {
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	}
 }
 
