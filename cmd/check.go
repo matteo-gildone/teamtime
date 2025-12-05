@@ -52,7 +52,6 @@ func checkFunc(cmd *cobra.Command, args []string) error {
 
 }
 
-// TODO: make it generic, maybe a ui package
 func renderTable(colleagues types.ColleagueList) {
 	plainStyle := styles.NewStyles()
 	heading := plainStyle.Bold()
@@ -64,7 +63,6 @@ func renderTable(colleagues types.ColleagueList) {
 	now := time.Now()
 
 	fmt.Println()
-	// TODO: improve the style package, deal with padding inside the render method
 	fmt.Printf("%s | %s | %-20s | %-20s\n", heading.Render(fmt.Sprintf("%-4s", "ID")), heading.Render(fmt.Sprintf("%-20s", "Name")), heading.Render(fmt.Sprintf("%-20s", "City")), heading.Render(fmt.Sprintf("%-20s", "Local Time")))
 	fmt.Printf("%-4s | %-20s | %-20s | %-20s\n", strings.Repeat("-", 4), strings.Repeat("-", 20), strings.Repeat("-", 20), strings.Repeat("-", 20))
 	for idx, c := range colleagues {

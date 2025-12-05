@@ -40,23 +40,10 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to save to %s: %w\nNote: %s was not removed due to save failure", m.GetFilePath(), err, removed.Name)
 	}
 	successStyle := styles.NewStyles().Green()
-	successMessage := fmt.Sprintf("✓ %s was removed\n", removed.Name)
-	styledSuccessMessage := successStyle.Render(successMessage)
-	fmt.Println()
-	fmt.Println(styledSuccessMessage)
+	fmt.Println(successStyle.Render(fmt.Sprintf("✓ %s was removed", removed.Name)))
 	return nil
 }
 
 func init() {
 	rootCmd.AddCommand(removeCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// removeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// removeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

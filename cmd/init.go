@@ -43,7 +43,7 @@ func initFunc() error {
 	}
 
 	if m.Exists() {
-		return fmt.Errorf("app already initialised app in %s\n", m.GetFilePath())
+		return fmt.Errorf("app already initialised app in %s\n", m.GetRelativeFilePath())
 	}
 
 	if err = m.EnsureFolder(); err != nil {
@@ -56,10 +56,14 @@ func initFunc() error {
 		return fmt.Errorf("failed create 'colleagues.json' %w", err)
 	}
 
+	fmt.Println(styles.NewStyles().Cyan().Bold().Render(`
+ ____  ____   __   _  _  ____  __  _  _  ____
+(_  _)(  __) / _\ ( \/ )(_  _)(  )( \/ )(  __)
+  )(   ) _) /    \/ \/ \  )(   )( / \/ \ ) _)
+ (__) (____)\_/\_/\_)(_/ (__) (__)\_)(_/(____)`))
+
 	successStyle := styles.NewStyles().Green()
-	successMessage := fmt.Sprintf("Initialised app in: %s\n", m.GetFilePath())
-	styledSuccessMessage := successStyle.Render(successMessage)
 	fmt.Println()
-	fmt.Println(styledSuccessMessage)
+	fmt.Println(successStyle.Render(fmt.Sprintf("Initialised app in: %s", m.GetRelativeFilePath())))
 	return nil
 }

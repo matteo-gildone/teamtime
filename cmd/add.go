@@ -37,10 +37,7 @@ func addFunc(cmd *cobra.Command, args []string) error {
 	}
 
 	successStyle := styles.NewStyles().Green()
-	successMessage := fmt.Sprintf("✓ %s was added\n", args[0])
-	styledSuccessMessage := successStyle.Render(successMessage)
-	fmt.Println()
-	fmt.Println(styledSuccessMessage)
+	fmt.Println(successStyle.Render(fmt.Sprintf("✓ %s was added", args[0])))
 	return nil
 }
 
