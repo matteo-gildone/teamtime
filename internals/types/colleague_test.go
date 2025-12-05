@@ -135,7 +135,7 @@ func TestColleague_NewColleague_Validation(t *testing.T) {
 	}
 }
 
-func TestColleague_NewColleague_Validation_InvalidTimezones(t *testing.T) {
+func TestColleague_NewColleague_InvalidTimezones(t *testing.T) {
 	tests := []struct {
 		name    string
 		inputTZ string

@@ -76,7 +76,10 @@ func (m *Manager) GetFilePath() string {
 }
 
 func (m *Manager) GetRelativeFilePath() string {
-	rel, _ := filepath.Rel(m.homeDir, m.filePath)
+	rel, err := filepath.Rel(m.homeDir, m.filePath)
+	if err != nil {
+		return m.filePath
+	}
 	return filepath.Join("~", rel)
 }
 

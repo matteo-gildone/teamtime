@@ -22,23 +22,20 @@ type Colleague struct {
 }
 
 func (c Colleague) Validate() error {
-	name := strings.TrimSpace(c.Name)
-	city := strings.TrimSpace(c.City)
-	tz := strings.TrimSpace(c.Timezone)
 
-	if name == "" {
+	if c.Name == "" {
 		return ErrMissingName
 	}
 
-	if city == "" {
+	if c.City == "" {
 		return ErrMissingCity
 	}
 
-	if tz == "" {
+	if c.Timezone == "" {
 		return ErrMissingTimezone
 	}
 
-	if _, err := time.LoadLocation(tz); err != nil {
+	if _, err := time.LoadLocation(c.Timezone); err != nil {
 		return err
 	}
 
@@ -64,8 +61,9 @@ func NewColleague(name, city, tz string) (Colleague, error) {
 
 type ColleagueList []Colleague
 
-func (cl *ColleagueList) Add(newColleague Colleague) {
+func (cl *ColleagueList) Add(newColleague Colleague) error {
 	*cl = append(*cl, newColleague)
+	return nil
 }
 
 func (cl *ColleagueList) Delete(idx int) (Colleague, error) {

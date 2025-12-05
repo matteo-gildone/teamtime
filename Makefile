@@ -6,11 +6,11 @@ build:
 
 # Run tests
 test:
-	go test -v ./...
+	go test -v -race ./...
 
 # Run tests with coverage
 test-coverage:
-	go test -v -coverprofile=coverage.out ./...
+	go test -v -race -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 
 # Clean build artifacts
