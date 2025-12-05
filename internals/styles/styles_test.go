@@ -115,33 +115,41 @@ func TestStyles_Render(t *testing.T) {
 
 func TestStyleChaining(t *testing.T) {
 	tests := []struct {
-		name  string
-		style Style
-		input string
-		want  string
+		name    string
+		style   Style
+		input   string
+		noColor bool
+		want    string
 	}{
 		{
-			name:  "base style unchanged",
-			style: NewStyles(),
-			input: "text",
-			want:  "text",
+			name:    "base style unchanged",
+			style:   NewStyles(),
+			input:   "text",
+			noColor: false,
+			want:    "text",
 		},
 		{
-			name:  "red style independent",
-			style: NewStyles().Red(),
-			input: "text",
-			want:  "\033[31mtext\033[0m",
+			name:    "red style independent",
+			style:   NewStyles().Red(),
+			input:   "text",
+			noColor: false,
+			want:    "\033[31mtext\033[0m",
 		},
 		{
-			name:  "multiple styles independent",
-			style: NewStyles().Red().Bold(),
-			input: "text",
-			want:  "\033[31;1mtext\033[0m",
+			name:    "multiple styles independent",
+			style:   NewStyles().Red().Bold(),
+			input:   "text",
+			noColor: false,
+			want:    "\033[31;1mtext\033[0m",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			originalNoColor := noColor
+			defer func() { noColor = originalNoColor }()
+
+			noColor = tt.noColor
 			got := tt.style.Render(tt.input)
 			if got != tt.want {
 				t.Errorf("Render() = %q, want %q", got, tt.want)
