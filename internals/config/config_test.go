@@ -207,10 +207,7 @@ func TestManager_Save(t *testing.T) {
 			cl := types.NewColleagues()
 
 			for _, c := range tt.colleagues {
-				err := cl.Add(c.name, c.city, c.tz)
-				if err != nil {
-					t.Fatalf("failed to add colleague: %v", err)
-				}
+				cl.Add(mustNewColleague(t, c.name, c.city, c.tz))
 			}
 
 			err := m.Save(cl)
@@ -255,7 +252,8 @@ func TestManager_Save(t *testing.T) {
 
 		// Save initial data
 		cl1 := types.NewColleagues()
-		cl1.Add("Alice", "London", "Europe/London")
+
+		cl1.Add(mustNewColleague(t, "Alice", "London", "Europe/London"))
 		err := m.Save(cl1)
 		if err != nil {
 			t.Fatalf("first save failed: %v", err)
@@ -263,7 +261,7 @@ func TestManager_Save(t *testing.T) {
 
 		// Save new data (overwrites)
 		cl2 := types.NewColleagues()
-		cl2.Add("Bob", "NYC", "America/New_York")
+		cl2.Add(mustNewColleague(t, "Bob", "NYC", "America/New_York"))
 		err = m.Save(cl2)
 		if err != nil {
 			t.Fatalf("second save failed: %v", err)
@@ -469,10 +467,7 @@ func TestManager_Integration(t *testing.T) {
 			// Create and save data
 			original := types.NewColleagues()
 			for _, c := range tt.colleagues {
-				err := original.Add(c.name, c.city, c.tz)
-				if err != nil {
-					t.Fatalf("failed to add colleague: %v", err)
-				}
+				original.Add(mustNewColleague(t, c.name, c.city, c.tz))
 			}
 
 			err := m.Save(original)
@@ -511,4 +506,13 @@ func TestManager_Integration(t *testing.T) {
 			}
 		})
 	}
+}
+
+func mustNewColleague(t *testing.T, name, city, tz string) types.Colleague {
+	t.Helper()
+	colleague, err := types.NewColleague(name, city, tz)
+	if err != nil {
+		t.Fatalf("NewColleague(%q,%q, %q) failed: %v", name, city, tz, err)
+	}
+	return colleague
 }

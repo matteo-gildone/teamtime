@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/matteo-gildone/teamtime/internals/styles"
+	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
 )
 
@@ -24,11 +25,14 @@ func addFunc(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	err = colleagues.Add(args[0], args[1], args[2])
+
+	newColleague, err := types.NewColleague(args[0], args[1], args[2])
 
 	if err != nil {
 		return fmt.Errorf("invalid colleague data: %w", err)
 	}
+
+	colleagues.Add(newColleague)
 
 	err = m.Save(colleagues)
 

@@ -21,47 +21,48 @@ type Colleague struct {
 	Timezone string `json:"timezone"`
 }
 
-func (c *Colleague) Validate() error {
-	name := strings.TrimSpace(c.Name)
-	city := strings.TrimSpace(c.City)
-	tz := strings.TrimSpace(c.Timezone)
+func (c Colleague) Validate() error {
 
-	if name == "" {
+	if c.Name == "" {
 		return ErrMissingName
 	}
 
-	if city == "" {
+	if c.City == "" {
 		return ErrMissingCity
 	}
 
-	if tz == "" {
+	if c.Timezone == "" {
 		return ErrMissingTimezone
 	}
 
-	if _, err := time.LoadLocation(tz); err != nil {
+	if _, err := time.LoadLocation(c.Timezone); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-type ColleagueList []Colleague
-
-func (cl *ColleagueList) Add(name, city, tz string) error {
+func NewColleague(name, city, tz string) (Colleague, error) {
 	name = strings.TrimSpace(name)
 	city = strings.TrimSpace(city)
 	tz = strings.TrimSpace(tz)
-	newCol := Colleague{
+	newColleague := Colleague{
 		Name:     name,
 		City:     city,
 		Timezone: tz,
 	}
 
-	if err := newCol.Validate(); err != nil {
-		return err
+	if err := newColleague.Validate(); err != nil {
+		return Colleague{}, err
 	}
 
-	*cl = append(*cl, newCol)
+	return newColleague, nil
+}
+
+type ColleagueList []Colleague
+
+func (cl *ColleagueList) Add(newColleague Colleague) error {
+	*cl = append(*cl, newColleague)
 	return nil
 }
 
