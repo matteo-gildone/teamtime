@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/matteo-gildone/teamtime/internals/config"
+	"github.com/matteo-gildone/teamtime/internals/styles"
 	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
 )
@@ -55,6 +56,10 @@ func initFunc() error {
 		return fmt.Errorf("failed create 'colleagues.json' %w", err)
 	}
 
-	fmt.Printf("Initialised app in: %s\n", m.GetFilePath())
+	successStyle := styles.NewStyles().Green()
+	successMessage := fmt.Sprintf("Initialised app in: %s\n", m.GetFilePath())
+	styledSuccessMessage := successStyle.Render(successMessage)
+	fmt.Println()
+	fmt.Println(styledSuccessMessage)
 	return nil
 }
