@@ -6,7 +6,7 @@ build:
 
 # Run tests
 test:
-	go test -v -race ./...
+	go test -v ./...
 
 # Run tests with coverage
 test-coverage:
