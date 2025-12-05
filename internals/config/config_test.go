@@ -63,6 +63,23 @@ func TestManager_GetFilePath(t *testing.T) {
 	}
 }
 
+func TestManager_GetRelativeFilePath(t *testing.T) {
+
+	homeDir := t.TempDir()
+	want := "~/file.json"
+
+	m := Manager{
+		homeDir:  homeDir,
+		filePath: filepath.Join(homeDir, "file.json"),
+	}
+
+	got := m.GetRelativeFilePath()
+
+	if got != want {
+		t.Errorf("got %q want %q", got, want)
+	}
+}
+
 func TestManager_EnsureFolder(t *testing.T) {
 	t.Run("create folder when it doesn't exists", func(t *testing.T) {
 		tempDir := t.TempDir()
