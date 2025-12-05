@@ -39,5 +39,5 @@ check: lint test ## Run all checks
 
 pkgdev: ## Trigger pkg.go.dev indexing
 	@test -n "$(VERSION)" || (echo "No git tag found"; exit 1)
-	@curl -fsS https://proxy.golang.org/$(MODULE)/@v/$(VERSION){.info,.mod,.zip} >/dev/null || true
+	@echo "https://proxy.golang.org/$(MODULE)/@v/$(VERSION).info"
 	@echo "→ https://pkg.go.dev/$(MODULE)@$(VERSION)"
