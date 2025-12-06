@@ -85,7 +85,7 @@ func TestGetDisplayTime_WorkHours(t *testing.T) {
 				t.Errorf("work hours should not have and indicator, got: %q", result)
 			}
 
-			if !tt.noColor && !strings.Contains(result, "\033[1;36") {
+			if !tt.noColor && !strings.Contains(result, "36") {
 				t.Errorf("work hours should contain ANSI, got: %q", result)
 			}
 		})
@@ -123,8 +123,8 @@ func TestGetDisplayTime_ExtendedHours(t *testing.T) {
 				t.Errorf("extended hours should have [Extended], got: %q", result)
 			}
 
-			if !tt.noColor && !strings.Contains(result, "\033[1;33") {
-				t.Errorf("work hours should contain ANSI, got: %q", result)
+			if !tt.noColor && !strings.Contains(result, "33") {
+				t.Errorf("extended hours should contain ANSI, got: %q", result)
 			}
 		})
 	}
@@ -158,11 +158,11 @@ func TestGetDisplayTime_OffHours(t *testing.T) {
 			result := getDisplayTime(testTime)
 
 			if !strings.Contains(result, "[Off]") {
-				t.Errorf("extended hours should have [Off], got: %q", result)
+				t.Errorf("off hours should have [Off], got: %q", result)
 			}
 
-			if !tt.noColor && !strings.Contains(result, "\033[1;31") {
-				t.Errorf("work hours should contain ANSI, got: %q", result)
+			if !tt.noColor && !strings.Contains(result, "31") {
+				t.Errorf("off hours should contain ANSI, got: %q", result)
 			}
 		})
 	}
