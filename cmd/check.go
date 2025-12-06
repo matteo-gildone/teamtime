@@ -10,6 +10,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type timeClassification string
+
+const (
+	timeWork     timeClassification = "work"
+	timeExtended timeClassification = "extended"
+	timeOff      timeClassification = "off"
+)
+
 // checkCmd represents the list command
 var checkCmd = &cobra.Command{
 	Use:   "check",
@@ -93,23 +101,33 @@ func renderTable(colleagues types.ColleagueList) {
 	}
 }
 
-func getDisplayTime(localTime time.Time) string {
-	hour := localTime.Hour()
-	timeStr := localTime.Format("15:04 (Mon 02 Jan)")
-
-	base := styles.NewStyles().Bold()
-
-	// Work hours: 9am-5pm
-
+func classifyTimeOfDay(hour int) timeClassification {
 	if hour >= 9 && hour < 17 {
-		return base.Cyan().Render(fmt.Sprintf("%-32s", timeStr))
+		return timeWork
 	}
 
 	if (hour >= 7 && hour < 9) || (hour >= 17 && hour < 19) {
-		return base.Yellow().Render(fmt.Sprintf("%-32s", timeStr+" [Extended]"))
+		return timeExtended
 	}
 
-	return base.Red().Render(fmt.Sprintf("%-32s", timeStr+" [Off]"))
+	return timeOff
+}
+
+func getDisplayTime(localTime time.Time) string {
+	hour := localTime.Hour()
+	timeStr := localTime.Format("15:04 (Mon 02 Jan)")
+	base := styles.NewStyles().Bold()
+
+	switch classifyTimeOfDay(hour) {
+	case timeWork:
+		return base.Cyan().Render(fmt.Sprintf("%-32s", timeStr))
+	case timeExtended:
+		return base.Yellow().Render(fmt.Sprintf("%-32s", timeStr+" [Extended]"))
+	case timeOff:
+		return base.Red().Render(fmt.Sprintf("%-32s", timeStr+" [Off]"))
+	default:
+		return base.Render(fmt.Sprintf("%-32s", timeStr))
+	}
 }
 
 func renderLegend() {
