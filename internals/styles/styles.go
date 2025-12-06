@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-var noColor bool
+var NoColor bool
 
 func init() {
-	noColor = os.Getenv("NO_COLOR") != "" ||
+	NoColor = os.Getenv("NO_COLOR") != "" ||
 		os.Getenv("TERM") == "dumb" ||
 		os.Getenv("TERM") == ""
 }
@@ -66,7 +66,7 @@ func (s Style) Cyan() Style {
 }
 
 func (s Style) Render(text string) string {
-	if len(s.codes) == 0 || noColor {
+	if len(s.codes) == 0 || NoColor {
 		return text
 	}
 

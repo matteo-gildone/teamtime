@@ -99,10 +99,10 @@ func TestStyles_Render(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			originalNoColor := noColor
-			defer func() { noColor = originalNoColor }()
+			originalNoColor := NoColor
+			defer func() { NoColor = originalNoColor }()
 
-			noColor = tt.noColor
+			NoColor = tt.noColor
 			got := tt.style.Render(tt.input)
 
 			if got != tt.want {
@@ -146,10 +146,10 @@ func TestStyleChaining(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			originalNoColor := noColor
-			defer func() { noColor = originalNoColor }()
+			originalNoColor := NoColor
+			defer func() { NoColor = originalNoColor }()
 
-			noColor = tt.noColor
+			NoColor = tt.noColor
 			got := tt.style.Render(tt.input)
 			if got != tt.want {
 				t.Errorf("Render() = %q, want %q", got, tt.want)

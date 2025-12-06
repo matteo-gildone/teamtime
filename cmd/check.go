@@ -88,7 +88,9 @@ func renderTable(colleagues types.ColleagueList) {
 			timeDisplay)
 	}
 	fmt.Println()
-	renderLegend()
+	if !styles.NoColor {
+		renderLegend()
+	}
 }
 
 func getDisplayTime(localTime time.Time) string {
@@ -116,6 +118,7 @@ func renderLegend() {
 	fmt.Println(plain.Cyan().Bold().Render("    Cyan") + " - Work hours (9am-5pm)")
 	fmt.Println(plain.Yellow().Bold().Render("    Yellow") + " - Extended hours")
 	fmt.Println(plain.Red().Bold().Render("    Red") + " - Off hours")
+	fmt.Println()
 }
 
 func init() {
