@@ -10,16 +10,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	extendedStart  int = 7
+	extendedEnd    int = 20
+	workHoursStart int = 9
+	workHoursEnd   int = 17
+)
+
 type timeClassification string
 
 const (
-	timeWork       timeClassification = "work"
-	timeExtended   timeClassification = "extended"
-	timeOff        timeClassification = "off"
-	extendedStart  int                = 7
-	extendedEnd    int                = 20
-	workHoursStart int                = 9
-	workHoursEnd   int                = 17
+	timeWork     timeClassification = "work"
+	timeExtended timeClassification = "extended"
+	timeOff      timeClassification = "off"
 )
 
 // checkCmd represents the list command
@@ -100,9 +103,7 @@ func renderTable(colleagues types.ColleagueList) {
 			timeDisplay)
 	}
 	fmt.Println()
-	if !styles.NewStyles().NoColor {
-		renderLegend()
-	}
+	renderLegend(plainStyle)
 }
 
 func classifyTimeOfDay(hour int) timeClassification {
@@ -134,12 +135,14 @@ func getDisplayTime(localTime time.Time, plainStyle styles.Style) string {
 	}
 }
 
-func renderLegend() {
-	plain := styles.NewStyles()
-	fmt.Println(plain.Render("Availability:"))
-	fmt.Println(plain.Cyan().Bold().Render("    Cyan") + " - Work hours (9am-5pm)")
-	fmt.Println(plain.Yellow().Bold().Render("    Yellow") + " - Extended hours")
-	fmt.Println(plain.Red().Bold().Render("    Red") + " - Off hours")
+func renderLegend(plainStyle styles.Style) {
+	if plainStyle.NoColor() {
+		return
+	}
+	fmt.Println(plainStyle.Render("Availability:"))
+	fmt.Println(plainStyle.Cyan().Bold().Render("    Cyan") + " - Work hours (9am-5pm)")
+	fmt.Println(plainStyle.Yellow().Bold().Render("    Yellow") + " - Extended hours")
+	fmt.Println(plainStyle.Red().Bold().Render("    Red") + " - Off hours")
 	fmt.Println()
 }
 

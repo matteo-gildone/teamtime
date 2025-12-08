@@ -3,10 +3,65 @@ package styles
 import "testing"
 
 func TestStyles_New(t *testing.T) {
-	base := NewStyles()
+	style := NewStyles()
 
-	if len(base.codes) != 0 {
-		t.Errorf("expected empty list, got length %d", len(base.codes))
+	if len(style.codes) != 0 {
+		t.Errorf("expected empty list, got length %d", len(style.codes))
+	}
+}
+
+func TestStyles_NewWithNoColor(t *testing.T) {
+	tests := []struct {
+		name    string
+		noColor bool
+	}{
+		{
+			name:    "with color",
+			noColor: false,
+		},
+		{
+			name:    "without color",
+			noColor: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			style := NewStylesWithNoColor(tt.noColor)
+
+			if style.NoColor() != tt.noColor {
+				t.Errorf("got %v, want %v", style.NoColor(), tt.noColor)
+			}
+		})
+	}
+
+}
+
+func TestStyle_NoColor(t *testing.T) {
+	tests := []struct {
+		name        string
+		style       Style
+		wantNoColor bool
+	}{
+		{
+			name:        "explicit color enabled",
+			style:       NewStylesWithNoColor(false),
+			wantNoColor: false,
+		},
+		{
+			name:        "explicit color disabled",
+			style:       NewStylesWithNoColor(true),
+			wantNoColor: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			if got := tt.style.NoColor(); got != tt.wantNoColor {
+				t.Errorf("got %v, want %v", got, tt.wantNoColor)
+			}
+		})
 	}
 }
 
@@ -192,7 +247,7 @@ func TestStyleChaining(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.style.Render(tt.input)
 			if got != tt.want {
-				t.Errorf("Render() = %q, want %q", got, tt.want)
+				t.Errorf("got %q, want %q", got, tt.want)
 			}
 		})
 	}

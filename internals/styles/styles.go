@@ -7,7 +7,7 @@ import (
 
 type Style struct {
 	codes   []string
-	NoColor bool
+	noColor bool
 }
 
 // NewStyles creates a new style with auto-detect colour support
@@ -15,7 +15,7 @@ type Style struct {
 func NewStyles() Style {
 	return Style{
 		codes: []string{},
-		NoColor: os.Getenv("NO_COLOR") != "" ||
+		noColor: os.Getenv("NO_COLOR") != "" ||
 			os.Getenv("TERM") == "dumb" ||
 			os.Getenv("TERM") == "",
 	}
@@ -26,8 +26,12 @@ func NewStyles() Style {
 func NewStylesWithNoColor(noColor bool) Style {
 	return Style{
 		codes:   []string{},
-		NoColor: noColor,
+		noColor: noColor,
 	}
+}
+
+func (s Style) NoColor() bool {
+	return s.noColor
 }
 
 // addCode return a new Style with an additional ANSI code
@@ -36,7 +40,7 @@ func (s Style) addCode(code string) Style {
 	codes = append(codes, code)
 	return Style{
 		codes:   codes,
-		NoColor: s.NoColor,
+		noColor: s.noColor,
 	}
 }
 
@@ -86,7 +90,7 @@ func (s Style) Cyan() Style {
 
 // Render applies the style to given text
 func (s Style) Render(text string) string {
-	if len(s.codes) == 0 || s.NoColor {
+	if len(s.codes) == 0 || s.noColor {
 		return text
 	}
 
