@@ -19,56 +19,56 @@ func TestStylesWithColor_Render(t *testing.T) {
 	}{
 		{
 			name:  "base style",
-			style: NewStyles(),
+			style: NewStylesWithNoColor(false),
 			input: "base style",
 			want:  "base style",
 		},
 		{
 			name:  "bold style",
 			input: "bold style",
-			style: NewStyles().Bold(),
+			style: NewStylesWithNoColor(false).Bold(),
 			want:  "\033[1mbold style\033[0m",
 		},
 		{
 			name:  "dim style",
 			input: "dim style",
-			style: NewStyles().Dim(),
+			style: NewStylesWithNoColor(false).Dim(),
 			want:  "\033[2mdim style\033[0m",
 		},
 		{
 			name:  "underline style",
 			input: "underline style",
-			style: NewStyles().Underline(),
+			style: NewStylesWithNoColor(false).Underline(),
 			want:  "\033[4munderline style\033[0m",
 		},
 		{
 			name:  "italic style",
 			input: "italic style",
-			style: NewStyles().Italic(),
+			style: NewStylesWithNoColor(false).Italic(),
 			want:  "\033[3mitalic style\033[0m",
 		},
 		{
 			name:  "red style",
 			input: "red style",
-			style: NewStyles().Red(),
+			style: NewStylesWithNoColor(false).Red(),
 			want:  "\033[31mred style\033[0m",
 		},
 		{
 			name:  "green style",
 			input: "green style",
-			style: NewStyles().Green(),
+			style: NewStylesWithNoColor(false).Green(),
 			want:  "\033[32mgreen style\033[0m",
 		},
 		{
 			name:  "yellow style",
 			input: "yellow style",
-			style: NewStyles().Yellow(),
+			style: NewStylesWithNoColor(false).Yellow(),
 			want:  "\033[33myellow style\033[0m",
 		},
 		{
 			name:  "cyan style",
 			input: "cyan style",
-			style: NewStyles().Cyan(),
+			style: NewStylesWithNoColor(false).Cyan(),
 			want:  "\033[36mcyan style\033[0m",
 		},
 	}
@@ -169,25 +169,22 @@ func TestStyleChaining(t *testing.T) {
 		want    string
 	}{
 		{
-			name:    "base style unchanged",
-			style:   NewStylesWithNoColor(false),
-			input:   "text",
-			noColor: false,
-			want:    "text",
+			name:  "base style unchanged",
+			style: NewStylesWithNoColor(false),
+			input: "text",
+			want:  "text",
 		},
 		{
-			name:    "red style independent",
-			style:   NewStylesWithNoColor(false).Red(),
-			input:   "text",
-			noColor: false,
-			want:    "\033[31mtext\033[0m",
+			name:  "red style independent",
+			style: NewStylesWithNoColor(false).Red(),
+			input: "text",
+			want:  "\033[31mtext\033[0m",
 		},
 		{
-			name:    "multiple styles independent",
-			style:   NewStylesWithNoColor(false).Red().Bold(),
-			input:   "text",
-			noColor: false,
-			want:    "\033[31;1mtext\033[0m",
+			name:  "multiple styles independent",
+			style: NewStylesWithNoColor(false).Red().Bold(),
+			input: "text",
+			want:  "\033[31;1mtext\033[0m",
 		},
 	}
 

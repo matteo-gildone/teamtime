@@ -93,7 +93,7 @@ func renderTable(colleagues types.ColleagueList) {
 			continue
 		}
 		local := now.In(loc)
-		timeDisplay := getDisplayTime(local)
+		timeDisplay := getDisplayTime(local, plainStyle)
 		fmt.Printf("%-4d | %-20s | %s\n",
 			idx+1,
 			c.Name,
@@ -117,10 +117,10 @@ func classifyTimeOfDay(hour int) timeClassification {
 	return timeOff
 }
 
-func getDisplayTime(localTime time.Time) string {
+func getDisplayTime(localTime time.Time, plainStyle styles.Style) string {
 	hour := localTime.Hour()
 	timeStr := localTime.Format("15:04 (Mon 02 Jan)")
-	base := styles.NewStyles().Bold()
+	base := plainStyle.Bold()
 
 	switch classifyTimeOfDay(hour) {
 	case timeWork:

@@ -4,6 +4,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/matteo-gildone/teamtime/internals/styles"
 )
 
 func TestClassifyTimeOfDay(t *testing.T) {
@@ -69,7 +71,8 @@ func TestGetDisplayTime_WorkHours(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testTime := time.Date(2025, 12, 6, tt.hour, 0, 0, 0, time.UTC)
-			result := getDisplayTime(testTime)
+			plainStyle := styles.NewStylesWithNoColor(false).Bold()
+			result := getDisplayTime(testTime, plainStyle)
 
 			if strings.Contains(result, "[Off]") || strings.Contains(result, "[Extended]") {
 				t.Errorf("work hours should not have and indicator, got: %q", result)
@@ -108,7 +111,8 @@ func TestGetDisplayTime_ExtendedHours(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testTime := time.Date(2025, 12, 6, tt.hour, 0, 0, 0, time.UTC)
-			result := getDisplayTime(testTime)
+			plainStyle := styles.NewStylesWithNoColor(false).Bold()
+			result := getDisplayTime(testTime, plainStyle)
 
 			if !strings.Contains(result, "[Extended]") {
 				t.Errorf("extended hours should have [Extended], got: %q", result)
@@ -139,7 +143,8 @@ func TestGetDisplayTime_OffHours(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testTime := time.Date(2025, 12, 6, tt.hour, 0, 0, 0, time.UTC)
-			result := getDisplayTime(testTime)
+			plainStyle := styles.NewStylesWithNoColor(false).Bold()
+			result := getDisplayTime(testTime, plainStyle)
 
 			if !strings.Contains(result, "[Off]") {
 				t.Errorf("off hours should have [Off], got: %q", result)
