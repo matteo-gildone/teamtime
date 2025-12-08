@@ -67,20 +67,18 @@ func (cl *ColleagueList) Add(newColleague Colleague) error {
 }
 
 func (cl *ColleagueList) Delete(idx int) (Colleague, error) {
-	ls := *cl
-
-	if len(ls) == 0 {
+	if len(*cl) == 0 {
 		return Colleague{}, ErrEmptyList
 	}
 
-	if idx <= 0 || idx > len(ls) {
-		return Colleague{}, fmt.Errorf("%w: %d (must be a number between 1 and %d)", ErrorInvalidIndex, idx, len(ls))
+	if idx <= 0 || idx > len(*cl) {
+		return Colleague{}, fmt.Errorf("%w: %d (must be a number between 1 and %d)", ErrorInvalidIndex, idx, len(*cl))
 	}
-	deleted := ls[idx-1]
+	deleted := (*cl)[idx-1]
 
-	copy(ls[idx-1:], ls[idx:])
-	ls[len(ls)-1] = Colleague{}
-	*cl = ls[:len(ls)-1]
+	copy((*cl)[idx-1:], (*cl)[idx:])
+	(*cl)[len(*cl)-1] = Colleague{}
+	*cl = (*cl)[:len(*cl)-1]
 	return deleted, nil
 }
 

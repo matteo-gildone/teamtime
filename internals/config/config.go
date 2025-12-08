@@ -33,7 +33,7 @@ func (m *Manager) Load() (*types.ColleagueList, error) {
 		if errors.Is(err, os.ErrNotExist) {
 			return types.NewColleagues(), nil
 		}
-		return nil, err
+		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
 
 	if len(file) == 0 {
@@ -42,7 +42,7 @@ func (m *Manager) Load() (*types.ColleagueList, error) {
 
 	cl := types.NewColleagues()
 	if err := json.Unmarshal(file, cl); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse JSON: %w", err)
 	}
 
 	for i, c := range *cl {

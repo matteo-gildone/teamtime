@@ -61,5 +61,6 @@ func initFunc() error {
 	successStyle := styles.NewStyles().Green()
 	fmt.Println()
 	fmt.Println(successStyle.Render(fmt.Sprintf("Initialised app in: %s", m.GetRelativeFilePath())))
+	fmt.Println()
 	return nil
 }

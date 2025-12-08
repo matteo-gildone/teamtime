@@ -23,6 +23,10 @@ go build -o teamtime
 
 ![TeamTime Demo](img/demo.gif)
 
+### Colors disabled
+
+![TeamTime Demo](img/demo-nocolor.gif)
+
 ## Quick Start
 ```bash
 # Initialize the app
@@ -67,11 +71,11 @@ teamtime check all
 
 Output:
 ```
-ID                   | Name                 | City                 | Local Time          
--------------------- | -------------------- | -------------------- | --------------------
-1                    | Alice                | London               | 09:30 (Mon 20 Nov)
-2                    | Priya                | Pune                 | 15:00 (Mon 20 Nov)
-3                    | Marco                | Genova               | 10:30 (Mon 20 Nov)
+ID                   | Name                 |  Local Time          
+-------------------- | -------------------- | --------------------
+1                    | Alice                | 09:30 (Mon 20 Nov)    
+2                    | Priya                | 15:00 (Mon 20 Nov)    
+3                    | Marco                | 10:30 (Mon 20 Nov)   
 ```
 
 Display current local time for a particular team members
@@ -84,9 +88,9 @@ teamtime check Alice
 
 Output:
 ```
-ID                   | Name                 | City                 | Local Time          
--------------------- | -------------------- | -------------------- | --------------------
-1                    | Alice                | London               | 09:30 (Mon 20 Nov)
+ID                   | Name                 | Local Time          
+-------------------- | -------------------- | --------------------
+1                    | Alice                | 09:30 (Mon 20 Nov)
 ```
 
 ### `remove`
@@ -101,25 +105,6 @@ teamtime remove 2
 ## Configuration
 
 TeamTime stores data in `~/.teamtime/colleagues.json`
-
-## Roadmap
-
-- [ ] Add UI package
-- [ ] Weather information with concurrent API calls
-- [ ] Time zone conversion helpers
-- [ ] Find optimal meeting times
-
-## Development
-```bash
-# Run tests
-go test ./...
-
-# Run tests with coverage
-go test -cover ./...
-
-# Build
-go build -o teamtime
-```
 
 ## License
 

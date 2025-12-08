@@ -13,9 +13,13 @@ import (
 type timeClassification string
 
 const (
-	timeWork     timeClassification = "work"
-	timeExtended timeClassification = "extended"
-	timeOff      timeClassification = "off"
+	timeWork       timeClassification = "work"
+	timeExtended   timeClassification = "extended"
+	timeOff        timeClassification = "off"
+	extendedStart  int                = 7
+	extendedEnd    int                = 20
+	workHoursStart int                = 9
+	workHoursEnd   int                = 17
 )
 
 // checkCmd represents the list command
@@ -96,17 +100,17 @@ func renderTable(colleagues types.ColleagueList) {
 			timeDisplay)
 	}
 	fmt.Println()
-	if !styles.NoColor {
+	if !styles.NewStyles().NoColor {
 		renderLegend()
 	}
 }
 
 func classifyTimeOfDay(hour int) timeClassification {
-	if hour >= 9 && hour < 17 {
+	if hour >= workHoursStart && hour < workHoursEnd {
 		return timeWork
 	}
 
-	if (hour >= 7 && hour < 9) || (hour >= 17 && hour < 19) {
+	if (hour >= extendedStart && hour < workHoursStart) || (hour >= workHoursEnd && hour < extendedEnd) {
 		return timeExtended
 	}
 

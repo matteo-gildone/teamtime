@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
 		m, err := config.NewManager(homeDir)
 
 		if err != nil {
-			return fmt.Errorf(" create new manager %w", err)
+			return fmt.Errorf("failed to create manager %w", err)
 		}
 
 		if !m.Exists() {
@@ -43,7 +43,7 @@ var rootCmd = &cobra.Command{
 
 		cl, err := m.Load()
 		if err != nil {
-			return fmt.Errorf("failed load 'colleagues.json' in: %w", err)
+			return fmt.Errorf("failed load 'colleagues.json': %w", err)
 		}
 
 		ctx := cmd.Context()
