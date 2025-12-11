@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/matteo-gildone/teamtime/internals/config"
+	"github.com/matteo-gildone/teamtime/internals/storage"
 	"github.com/matteo-gildone/teamtime/internals/styles"
 	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
@@ -32,7 +32,7 @@ func initFunc() error {
 	if err != nil {
 		return fmt.Errorf("failed to get user home directory %w", err)
 	}
-	m, err := config.NewManager(homeDir)
+	m, err := storage.NewManager(homeDir)
 
 	if err != nil {
 		return fmt.Errorf("init command - %w", err)

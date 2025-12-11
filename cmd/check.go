@@ -34,34 +34,24 @@ var checkCmd = &cobra.Command{
 }
 
 func checkFunc(cmd *cobra.Command, args []string) error {
-	colleagues, err := GetColleagues(cmd.Context())
-
+	svc, err := GetColleaguesService(cmd.Context())
 	if err != nil {
-		return err
-	}
-
-	if len(*colleagues) == 0 {
-		fmt.Println("no colleague found")
-		return nil
+		return fmt.Errorf("check command: %w", err)
 	}
 
 	if args[0] == "all" {
-		renderTable(*colleagues)
-		return nil
-	}
-
-	var filteredColleagues types.ColleagueList
-	for _, c := range *colleagues {
-		if strings.EqualFold(c.Name, args[0]) {
-			filteredColleagues = append(filteredColleagues, c)
+		cl, err := svc.AllColleagues()
+		if err != nil {
+			return fmt.Errorf("check command: %w", err)
 		}
-	}
-
-	if len(filteredColleagues) == 0 {
-		fmt.Printf("no colleague found with name: %q\n", args[0])
+		renderTable(cl)
 		return nil
 	}
 
+	filteredColleagues, err := svc.FindColleague(args[0])
+	if err != nil {
+		return fmt.Errorf("check command: %w", err)
+	}
 	renderTable(filteredColleagues)
 	return nil
 

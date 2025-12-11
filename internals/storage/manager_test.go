@@ -1,4 +1,4 @@
-package config
+package storage
 
 import (
 	"encoding/json"
@@ -191,7 +191,7 @@ func TestManager_Save(t *testing.T) {
 			colleagues: []struct{ name, city, tz string }{
 				{"Alice", "London", "Europe/London"},
 				{"Bob", "NYC", "America/New_York"},
-				{"Charlie", "Tokyo", "Asia/Tokyo"},
+				{"Matteo", "Tokyo", "Asia/Tokyo"},
 			},
 			wantErr:        false,
 			expectedLength: 3,
@@ -452,7 +452,7 @@ func TestManager_Integration(t *testing.T) {
 			colleagues: []struct{ name, city, tz string }{
 				{"Alice", "London", "Europe/London"},
 				{"Bob", "NYC", "America/New_York"},
-				{"Charlie", "Tokyo", "Asia/Tokyo"},
+				{"Matteo", "Tokyo", "Asia/Tokyo"},
 			},
 		},
 	}

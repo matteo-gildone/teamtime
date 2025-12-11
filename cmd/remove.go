@@ -21,24 +21,16 @@ func removeFunc(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("index must be a number %w", err)
 	}
-	m, err := GetManager(cmd.Context())
-	if err != nil {
-		return err
-	}
-	colleagues, err := GetColleagues(cmd.Context())
+	svc, err := GetColleaguesService(cmd.Context())
 	if err != nil {
 		return err
 	}
 
-	removed, err := colleagues.Delete(idx)
-
+	removed, err := svc.RemoveColleague(idx)
 	if err != nil {
-		return fmt.Errorf("cannot remove colleague at index %d: %w", idx, err)
+		return fmt.Errorf("remove command: %w", err)
 	}
 
-	if err = m.Save(colleagues); err != nil {
-		return fmt.Errorf("failed to save to %s: %w\nNote: %s was not removed due to save failure", m.GetFilePath(), err, removed.Name)
-	}
 	successStyle := styles.NewStyles().Green()
 	fmt.Println(successStyle.Render(fmt.Sprintf("✓ %s was removed", removed.Name)))
 	return nil

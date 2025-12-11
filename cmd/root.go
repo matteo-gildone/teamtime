@@ -5,16 +5,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/matteo-gildone/teamtime/internals/config"
-	"github.com/matteo-gildone/teamtime/internals/types"
+	"github.com/matteo-gildone/teamtime/internals/service"
+	"github.com/matteo-gildone/teamtime/internals/storage"
 	"github.com/spf13/cobra"
 )
 
 type contextKey string
 
 const (
-	managerKey    contextKey = "manager"
-	colleaguesKey contextKey = "colleagues"
+	serviceKey contextKey = "colleagueservice"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -31,7 +30,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("failed to get user home directory %w", err)
 		}
-		m, err := config.NewManager(homeDir)
+		m, err := storage.NewManager(homeDir)
 
 		if err != nil {
 			return fmt.Errorf("failed to create manager %w", err)
@@ -41,14 +40,10 @@ var rootCmd = &cobra.Command{
 			return fmt.Errorf("'colleagues.json' not found, run 'teamtime init'")
 		}
 
-		cl, err := m.Load()
-		if err != nil {
-			return fmt.Errorf("failed load 'colleagues.json': %w", err)
-		}
+		svc := service.NewColleagueService(m)
 
 		ctx := cmd.Context()
-		ctx = context.WithValue(ctx, managerKey, m)
-		ctx = context.WithValue(ctx, colleaguesKey, cl)
+		ctx = context.WithValue(ctx, serviceKey, svc)
 
 		cmd.SetContext(ctx)
 
@@ -65,20 +60,14 @@ func Execute() {
 	}
 }
 
-func GetColleagues(ctx context.Context) (*types.ColleagueList, error) {
-	val := ctx.Value(colleaguesKey)
-	colleagues, ok := val.(*types.ColleagueList)
+func GetColleaguesService(ctx context.Context) (*service.ColleagueService, error) {
+	val := ctx.Value(serviceKey)
+	if val == nil {
+		return nil, fmt.Errorf("service not found in context")
+	}
+	svc, ok := val.(*service.ColleagueService)
 	if !ok {
-		return nil, fmt.Errorf("%s not found in context", colleaguesKey)
+		return nil, fmt.Errorf("unexpected type in context, got: %T, want *service.ColleagueService", val)
 	}
-	return colleagues, nil
-}
-
-func GetManager(ctx context.Context) (*config.Manager, error) {
-	val := ctx.Value(managerKey)
-	m, ok := val.(*config.Manager)
-	if !ok || m == nil {
-		return nil, fmt.Errorf("%s not found in context", managerKey)
-	}
-	return m, nil
+	return svc, nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/matteo-gildone/teamtime/internals/styles"
-	"github.com/matteo-gildone/teamtime/internals/types"
 	"github.com/spf13/cobra"
 )
 
@@ -17,31 +16,18 @@ var addCmd = &cobra.Command{
 }
 
 func addFunc(cmd *cobra.Command, args []string) error {
-	m, err := GetManager(cmd.Context())
-	if err != nil {
-		return err
-	}
-	colleagues, err := GetColleagues(cmd.Context())
+	svc, err := GetColleaguesService(cmd.Context())
 	if err != nil {
 		return err
 	}
 
-	newColleague, err := types.NewColleague(args[0], args[1], args[2])
-
+	newColleague, err := svc.AddColleague(args[0], args[1], args[2])
 	if err != nil {
-		return fmt.Errorf("invalid colleague data: %w", err)
-	}
-
-	colleagues.Add(newColleague)
-
-	err = m.Save(colleagues)
-
-	if err != nil {
-		return fmt.Errorf("failed to save to '%s' in: %w", m.GetFilePath(), err)
+		return fmt.Errorf("add command: %w", err)
 	}
 
 	successStyle := styles.NewStyles().Green()
-	fmt.Println(successStyle.Render(fmt.Sprintf("✓ %s was added", args[0])))
+	fmt.Println(successStyle.Render(fmt.Sprintf("✓ %s was added", newColleague.Name)))
 	return nil
 }
 

@@ -66,7 +66,7 @@ func (cl *ColleagueList) Add(newColleague Colleague) error {
 	return nil
 }
 
-func (cl *ColleagueList) Delete(idx int) (Colleague, error) {
+func (cl *ColleagueList) Remove(idx int) (Colleague, error) {
 	if len(*cl) == 0 {
 		return Colleague{}, ErrEmptyList
 	}
