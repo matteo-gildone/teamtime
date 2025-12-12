@@ -32,15 +32,19 @@ func TestColleagueList_Add(t *testing.T) {
 	})
 
 	t.Run("add multiple colleague", func(t *testing.T) {
-		colleagues := [][]string{
+		testData := []struct {
+			name string
+			city string
+			tz   string
+		}{
 			{"Alice", "London", "Europe/London"},
 			{"Bob", "Manchester", "Europe/London"},
 			{"Sabina", "Verona", "Europe/Rome"},
 		}
 		cl := ColleagueList{}
 
-		for _, colleague := range colleagues {
-			newColleague, err := NewColleague(colleague[0], colleague[1], colleague[2])
+		for _, colleague := range testData {
+			newColleague, err := NewColleague(colleague.name, colleague.city, colleague.tz)
 			if err != nil {
 				t.Errorf("%v", err)
 			}
@@ -51,17 +55,17 @@ func TestColleagueList_Add(t *testing.T) {
 			t.Errorf("expected list length %d, got %d instead.", 3, len(cl))
 		}
 
-		for i, colleague := range colleagues {
-			if cl[i].Name != colleague[0] {
-				t.Errorf("expected %q, got %q instead.", colleague[0], cl[i].Name)
+		for i, colleague := range testData {
+			if cl[i].Name != colleague.name {
+				t.Errorf("expected %q, got %q instead.", colleague.name, cl[i].Name)
 			}
 
-			if cl[i].City != colleague[1] {
-				t.Errorf("expected %q, got %q instead.", colleague[1], cl[i].City)
+			if cl[i].City != colleague.city {
+				t.Errorf("expected %q, got %q instead.", colleague.city, cl[i].City)
 			}
 
-			if cl[i].Timezone != colleague[2] {
-				t.Errorf("expected %q, got %q instead.", colleague[2], cl[i].Timezone)
+			if cl[i].Timezone != colleague.tz {
+				t.Errorf("expected %q, got %q instead.", colleague.tz, cl[i].Timezone)
 			}
 		}
 
