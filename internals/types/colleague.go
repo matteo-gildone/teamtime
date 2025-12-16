@@ -61,9 +61,8 @@ func NewColleague(name, city, tz string) (Colleague, error) {
 
 type ColleagueList []Colleague
 
-func (cl *ColleagueList) Add(newColleague Colleague) error {
+func (cl *ColleagueList) Add(newColleague Colleague) {
 	*cl = append(*cl, newColleague)
-	return nil
 }
 
 func (cl *ColleagueList) Remove(idx int) (Colleague, error) {

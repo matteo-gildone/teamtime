@@ -29,9 +29,7 @@ func (s *ColleagueService) AddColleague(name, city, tz string) (types.Colleague,
 		return types.Colleague{}, fmt.Errorf("invalid colleague data: %w", err)
 	}
 
-	if err := cl.Add(colleague); err != nil {
-		return types.Colleague{}, fmt.Errorf("failed to add colleague to list: %w", err)
-	}
+	cl.Add(colleague)
 
 	if err := s.manager.Save(cl); err != nil {
 		return types.Colleague{}, fmt.Errorf("colleague added to list but failed to save: %w", err)
