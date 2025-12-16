@@ -100,7 +100,7 @@ func (m *Manager) validateSize() error {
 	}
 
 	if info != nil && info.Size() > maxFileSize {
-		return fmt.Errorf("file too large %d bytes (max %d)", info.Size(), maxFileSize)
+		return fmt.Errorf("file too large: %d bytes (max %d)", info.Size(), maxFileSize)
 	}
 	return nil
 }
@@ -113,10 +113,10 @@ func NewManager(homeDir string) (*Manager, error) {
 	if !filepath.IsAbs(cleanHome) {
 		return nil, fmt.Errorf("homeDir must be an absolute path")
 	}
-	configPath := filepath.Join(homeDir, ".teamtime", "colleagues.json")
+	configPath := filepath.Join(cleanHome, ".teamtime", "colleagues.json")
 
 	return &Manager{
-		homeDir:  homeDir,
+		homeDir:  cleanHome,
 		filePath: configPath,
 	}, nil
 }

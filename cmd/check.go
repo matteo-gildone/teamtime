@@ -40,7 +40,7 @@ var checkCmd = &cobra.Command{
 
 func init() {
 	checkCmd.Flags().BoolP("watch", "w", false, "continuously update times")
-	checkCmd.Flags().IntP("interval", "i", 10, "update interval ins minutes")
+	checkCmd.Flags().IntP("interval", "i", 10, "update interval in minutes")
 	rootCmd.AddCommand(checkCmd)
 }
 
