@@ -193,7 +193,7 @@ func TestColleagueService_RemoveColleague(t *testing.T) {
 				wantErrorType: types.ErrorInvalidIndex,
 			},
 			{
-				name: "negative zero",
+				name: "negative index",
 				initial: []types.Colleague{
 					mustNewColleague(t, "Alice", "London", "Europe/London"),
 				},
@@ -373,6 +373,28 @@ func TestColleagueService_FindColleague(t *testing.T) {
 			}
 		}
 	})
+}
+
+func TestColleagueService_Integration(t *testing.T) {
+	svc, m := setUpTestService(t)
+
+	svc.AddColleague("Alice", "London", "Europe/London")
+	svc.AddColleague("Bob", "NYC", "America/New_York")
+	assertColleagueCount(t, m, 2)
+
+	results, _ := svc.FindColleague("Alice")
+	if len(results) != 1 {
+		t.Fatalf("got: %d want 1", len(results))
+	}
+
+	svc.RemoveColleague(1)
+	assertColleagueCount(t, m, 1)
+
+	all, _ := svc.AllColleagues()
+
+	if all[0].Name != "Bob" {
+		t.Errorf("got: %q want: Bob", all[0].Name)
+	}
 }
 
 func setUpTestService(t *testing.T) (*ColleagueService, *storage.Manager) {
