@@ -343,10 +343,10 @@ func TestColleagueService_FindColleague(t *testing.T) {
 			mustNewColleague(t, "Bob", "NYC", "America/New_York"),
 		})
 
-		_, err := svc.FindColleague("Matteo")
+		colleagues, _ := svc.FindColleague("Matteo")
 
-		if err == nil {
-			t.Fatal("expected error got nil")
+		if len(colleagues) != 0 {
+			t.Fatalf("expected empty list got: %d", len(colleagues))
 		}
 	})
 

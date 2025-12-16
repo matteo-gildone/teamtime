@@ -80,9 +80,5 @@ func (s *ColleagueService) FindColleague(name string) ([]types.Colleague, error)
 		}
 	}
 
-	if len(results) == 0 {
-		return nil, fmt.Errorf("no colleague found with name: %q\n", name)
-	}
-
 	return results, nil
 }
