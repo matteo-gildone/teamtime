@@ -13,6 +13,15 @@ var (
 	ErrMissingTimezone = errors.New("'Timezone' must not be empty")
 	ErrorInvalidIndex  = errors.New("invalid index")
 	ErrEmptyList       = errors.New("colleagues list is empty")
+	ErrLongName        = errors.New("name is too long")
+	ErrLongCity        = errors.New("city is too long")
+	ErrLongTimezone    = errors.New("timezone is too long")
+)
+
+const (
+	nameMaxLength     = 50
+	cityMaxLength     = 50
+	timezoneMaxLength = 50
 )
 
 type Colleague struct {
@@ -27,12 +36,24 @@ func (c Colleague) Validate() error {
 		return ErrMissingName
 	}
 
+	if len(c.Name) > nameMaxLength {
+		return fmt.Errorf("%w (max %d characters)", ErrLongName, nameMaxLength)
+	}
+
 	if c.City == "" {
 		return ErrMissingCity
 	}
 
+	if len(c.City) > cityMaxLength {
+		return fmt.Errorf("%w (max %d characters)", ErrLongCity, cityMaxLength)
+	}
+
 	if c.Timezone == "" {
 		return ErrMissingTimezone
+	}
+
+	if len(c.Timezone) > timezoneMaxLength {
+		return fmt.Errorf("%w (max %d characters)", ErrLongTimezone, timezoneMaxLength)
 	}
 
 	if _, err := time.LoadLocation(c.Timezone); err != nil {

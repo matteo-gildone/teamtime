@@ -122,6 +122,28 @@ func TestColleague_NewColleague_Validation(t *testing.T) {
 			inputTZ:   "   ",
 			wantErr:   ErrMissingTimezone,
 		},
+		{
+			name:      "name too long",
+			inputName: "Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio Gregorio",
+			inputCity: "Alba",
+			inputTZ:   "Europe/Rome",
+			wantErr:   ErrLongName,
+		},
+		{
+			name:      "city too long",
+			inputName: "Gregorio",
+			inputCity: "Alba Alba Alba Alba Alba Alba Alba Alba Alba Alba Alba Alba Alba Alba Alba ",
+			inputTZ:   "Europe/Rome",
+			wantErr:   ErrLongCity,
+		},
+
+		{
+			name:      "city too long",
+			inputName: "Gregorio",
+			inputCity: "Alba",
+			inputTZ:   "Europe/Rome Europe/Rome Europe/Rome Europe/Rome Europe/Rome Europe/Rome Europe/Rome",
+			wantErr:   ErrLongTimezone,
+		},
 	}
 
 	for _, tt := range tests {
