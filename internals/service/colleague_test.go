@@ -419,22 +419,6 @@ func assertColleagueCount(t *testing.T, m *storage.Manager, want int) {
 	}
 }
 
-func assertColleagueExists(t *testing.T, m *storage.Manager, name string) {
-	t.Helper()
-	loaded, err := m.Load()
-	if err != nil {
-		t.Fatalf("failed to load colleagues: %v", err)
-	}
-
-	for _, c := range *loaded {
-		if c.Name == name {
-			return
-		}
-	}
-
-	t.Errorf("want colleague %q to exist, but not found", name)
-}
-
 func mustNewColleague(t *testing.T, name, city, tz string) types.Colleague {
 	t.Helper()
 	colleague, err := types.NewColleague(name, city, tz)
