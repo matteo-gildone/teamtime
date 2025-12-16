@@ -10,6 +10,8 @@ import (
 	"github.com/matteo-gildone/teamtime/internals/types"
 )
 
+const maxFileSize = 10 * 1024 * 1024 // 10MB
+
 var ErrMissingHomeDir = errors.New("'homeDir' must not be empty")
 
 type Manager struct {
@@ -23,10 +25,19 @@ func (m *Manager) Save(cl *types.ColleagueList) error {
 		return err
 	}
 
-	return os.WriteFile(m.filePath, js, 0664)
+	return os.WriteFile(m.filePath, js, 0600)
 }
 
 func (m *Manager) Load() (*types.ColleagueList, error) {
+	info, err := os.Stat(m.filePath)
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		return types.NewColleagues(), nil
+	}
+
+	if info != nil && info.Size() > maxFileSize {
+		return nil, fmt.Errorf("file too large %d bytes (max %d)", info.Size(), maxFileSize)
+	}
+
 	file, err := os.ReadFile(m.filePath)
 
 	if err != nil {
@@ -86,6 +97,10 @@ func (m *Manager) GetRelativeFilePath() string {
 func NewManager(homeDir string) (*Manager, error) {
 	if homeDir == "" {
 		return nil, ErrMissingHomeDir
+	}
+	cleanHome := filepath.Clean(homeDir)
+	if !filepath.IsAbs(cleanHome) {
+		return nil, fmt.Errorf("homeDir must be an absolute path")
 	}
 	configPath := filepath.Join(homeDir, ".teamtime", "colleagues.json")
 

@@ -148,7 +148,7 @@ func TestManager_Exists(t *testing.T) {
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		t.Errorf("failed create directory %s: %v", tempDir, err)
 	}
-	err := os.WriteFile(testConfigPath, []byte("[]"), 0644)
+	err := os.WriteFile(testConfigPath, []byte("[]"), 0600)
 
 	if err != nil {
 		t.Fatalf("failed to create test file: %v", err)
@@ -371,7 +371,7 @@ func TestManager_Load(t *testing.T) {
 			testFile := filepath.Join(tempDir, "colleagues.json")
 
 			if tt.setupFile {
-				err := os.WriteFile(testFile, []byte(tt.fileContent), 0644)
+				err := os.WriteFile(testFile, []byte(tt.fileContent), 0600)
 				if err != nil {
 					t.Fatalf("failed to create test file: %v", err)
 				}

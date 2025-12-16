@@ -40,14 +40,14 @@ var checkCmd = &cobra.Command{
 
 func init() {
 	checkCmd.Flags().BoolP("watch", "w", false, "continuously update times")
-	checkCmd.Flags().IntP("interval", "i", 60, "update interval ins seconds")
+	checkCmd.Flags().IntP("interval", "i", 10, "update interval ins minutes")
 	rootCmd.AddCommand(checkCmd)
 }
 
 func checkFunc(cmd *cobra.Command, args []string) error {
 	svc, err := GetColleaguesService(cmd.Context())
 	if err != nil {
-		return fmt.Errorf("check command: %w", err)
+		return fmt.Errorf("failed to get colleague service: %w", err)
 	}
 
 	watchMode, err := cmd.Flags().GetBool("watch")
