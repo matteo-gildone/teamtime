@@ -29,13 +29,9 @@ func (m *Manager) Save(cl *types.ColleagueList) error {
 }
 
 func (m *Manager) Load() (*types.ColleagueList, error) {
-	info, err := os.Stat(m.filePath)
-	if err != nil && errors.Is(err, os.ErrNotExist) {
-		return types.NewColleagues(), nil
-	}
-
-	if info != nil && info.Size() > maxFileSize {
-		return nil, fmt.Errorf("file too large %d bytes (max %d)", info.Size(), maxFileSize)
+	err := m.validateSize()
+	if err != nil {
+		return nil, fmt.Errorf("failed to validate file size: %w", err)
 	}
 
 	file, err := os.ReadFile(m.filePath)
@@ -92,6 +88,18 @@ func (m *Manager) GetRelativeFilePath() string {
 		return m.filePath
 	}
 	return filepath.Join("~", rel)
+}
+
+func (m *Manager) validateSize() error {
+	info, err := os.Stat(m.filePath)
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+
+	if info != nil && info.Size() > maxFileSize {
+		return fmt.Errorf("file too large %d bytes (max %d)", info.Size(), maxFileSize)
+	}
+	return nil
 }
 
 func NewManager(homeDir string) (*Manager, error) {
