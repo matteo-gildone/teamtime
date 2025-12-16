@@ -73,7 +73,7 @@ func (m *Manager) EnsureFolder() error {
 	}
 
 	if err := os.MkdirAll(configDir, 0755); err != nil {
-		return fmt.Errorf("failed create directory %s: %w", configDir, err)
+		return fmt.Errorf("failed to create directory %s: %w", configDir, err)
 	}
 	return nil
 }
@@ -92,8 +92,11 @@ func (m *Manager) GetRelativeFilePath() string {
 
 func (m *Manager) validateSize() error {
 	info, err := os.Stat(m.filePath)
-	if err != nil && errors.Is(err, os.ErrNotExist) {
-		return nil
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return fmt.Errorf("failed to get file stats: %w", err)
 	}
 
 	if info != nil && info.Size() > maxFileSize {
