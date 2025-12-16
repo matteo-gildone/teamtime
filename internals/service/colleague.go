@@ -73,7 +73,7 @@ func (s *ColleagueService) FindColleague(name string) ([]types.Colleague, error)
 
 	var results types.ColleagueList
 	for _, c := range *cl {
-		if strings.EqualFold(c.Name, name) {
+		if strings.Contains(strings.ToLower(c.Name), strings.ToLower(name)) {
 			results = append(results, c)
 		}
 	}

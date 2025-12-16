@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/matteo-gildone/teamtime/internals/storage"
@@ -354,10 +355,10 @@ func TestColleagueService_FindColleague(t *testing.T) {
 		svc, m := setUpTestService(t)
 		setupInitialColleagues(t, m, []types.Colleague{
 			mustNewColleague(t, "Alice", "London", "Europe/London"),
-			mustNewColleague(t, "Alice", "NYC", "America/New_York"),
+			mustNewColleague(t, "Alia", "NYC", "America/New_York"),
 		})
 
-		results, err := svc.FindColleague("Alice")
+		results, err := svc.FindColleague("Ali")
 
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -368,8 +369,8 @@ func TestColleagueService_FindColleague(t *testing.T) {
 		}
 
 		for _, result := range results {
-			if result.Name != "Alice" {
-				t.Errorf("got: %q, want %q", result.Name, "Alice")
+			if !strings.Contains(result.Name, "Ali") {
+				t.Errorf("got: %q, want %q", result.Name, "Ali")
 			}
 		}
 	})
