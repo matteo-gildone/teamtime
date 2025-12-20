@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/matteo-gildone/teamtime)](https://goreportcard.com/report/github.com/matteo-gildone/teamtime)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A CLI tool to view local times and weather for your distributed team members.
+A CLI tool to view local times for your distributed team members.
 
 ## Installation
 ```bash

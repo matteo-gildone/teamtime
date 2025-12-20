@@ -19,7 +19,7 @@ const (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:          "teamtime",
-	Short:        "Global team time & weather",
+	Short:        "Global team time",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		if cmd.Name() == "init" || cmd.Name() == "help" {
